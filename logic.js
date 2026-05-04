@@ -1,4 +1,5 @@
-// Contas Em Pé — Logic puro (sem DOM, sem React)
+// Contas Em Pé — Lógica pura (sem DOM, sem React)
+// Funções: geração de exercícios, validação, persistência em localStorage.
 
 (function (global) {
   'use strict';

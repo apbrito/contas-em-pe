@@ -8,10 +8,10 @@
 //
 // Para forçar update: incrementa CACHE_VERSION. O install do novo SW
 // cria um cache fresco; o activate apaga o antigo. O utilizador
-// (o utilizador) pode ter de reabrir a app uma vez online para o novo
+// pode ter de reabrir a app uma vez online para o novo
 // SW activar.
 
-const CACHE_VERSION = 'contas-em-pe-v20260504-1234';
+const CACHE_VERSION = 'contas-em-pe-v20260504-1237';
 
 // Required: app não corre sem isto.
 const LOCAL_REQUIRED = [
@@ -44,7 +44,7 @@ self.addEventListener('install', (event) => {
     // Required: se algum falhar, install falha (correcto).
     await cache.addAll(LOCAL_REQUIRED);
     // Optional + CDNs: tolera falhas individuais. Usa modo default
-    // (`cors` para cross-origin), NÃO `no-cors` — porque o mat_app.html
+    // (`cors` para cross-origin), NÃO `no-cors` — porque o index.html
     // carrega React/ReactDOM com atributo `crossorigin`, fazendo
     // request `cors`. Cachear como opaque (no-cors) faria o
     // respondWith ser rejeitado quando servimos do cache para essa

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Contas Em Pé — jogo de soma com transporte para crianças (2º ano)">
+  <meta name="description" content="Contas Em Pé — jogo de soma com transporte para crianças (2.º ano)">
   <title>🦉 Contas Em Pé</title>
 
   <!-- PWA: manifesto + ícones + theme color para o Chrome Android -->
@@ -542,7 +542,7 @@
       });
 
       // Título manuscrito da conta a fazer, em formato horizontal — para o
-      // criança ler primeiro a operação completa antes de a desmontar nas
+      // jogador ler primeiro a operação completa antes de a desmontar nas
       // colunas. Usa as parcelas geradas; "= ?" enquanto não está resolvido.
       const exerciseTitle = exercise.parcelas.join(' + ') + ' = ?';
 
@@ -793,7 +793,7 @@
               <button onClick={() => setConfirmReset(true)} className="paper-button px-4 py-2" style={{ color: 'var(--error)' }}>Reset progresso</button>
             ) : (
               <div className="flex flex-col gap-2 paper-card p-3" style={{ background: '#fadcdc' }}>
-                <p className="m-0 text-sm" style={{ color: 'var(--error)' }}>Apagar todo o progresso? Não há volta atrás.</p>
+                <p className="m-0 text-sm" style={{ color: 'var(--error)' }}>Apagar todo o progresso da criança? Não há volta atrás.</p>
                 <div className="flex gap-2">
                   <button onClick={() => { onReset(); setConfirmReset(false); onClose(); }} className="paper-button px-4 py-2" style={{ background: 'var(--error)', color: 'white' }}>Sim, apagar</button>
                   <button onClick={() => setConfirmReset(false)} className="paper-button px-4 py-2">Cancelar</button>
