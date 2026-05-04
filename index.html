@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contas Em Pé — jogo de soma com transporte para crianças (2.º ano)">
+  <title>🦉 Contas Em Pé</title>
+
+  <!-- PWA: manifesto + ícones + theme color para o Chrome Android -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2a3e5c">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- React 18 -->
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel para JSX inline -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind utility CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonte manuscrita -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Lógica pura -->
+  <script src="logic.js"></script>
+
+  <style>
+    :root {
+      --paper-bg: #fdf6e3;
+      --paper-grid: #e8dfb0;
+      --ink-primary: #2a3e5c;
+      --ink-secondary: #5c4a2a;
+      --success: #7fb069;
+      --hint: #e8a05c;
+      --error: #c47474;
+      --magic-gold: #d4a017;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: var(--ink-primary);
+      background-color: var(--paper-bg);
+      background-image:
+        linear-gradient(var(--paper-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    .handwritten {
+      font-family: 'Caveat', 'Bradley Hand', 'Comic Sans MS', cursive;
+      font-weight: 700;
+    }
+
+    /* Animações base */
+    @keyframes pencil-stroke {
+      from { opacity: 0; transform: translateY(-3px) scale(0.85); }
+      60%  { opacity: 1; }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .anim-pencil { animation: pencil-stroke 0.35s ease-out both; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-3px); }
+    }
+    .anim-shake { animation: shake 0.3s ease-in-out; }
+
+    @keyframes pulse-soft {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(42, 62, 92, 0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(42, 62, 92, 0); }
+    }
+    .anim-pulse { animation: pulse-soft 1.4s ease-out infinite; }
+
+    @keyframes star-pop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .anim-star { animation: star-pop 0.4s ease-out forwards; }
+
+    @keyframes fly-arc {
+      0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: var(--fly-end, translate(60px, -60px)) scale(1); opacity: 1; }
+    }
+    .anim-fly-arc { animation: fly-arc 0.6s ease-out forwards; }
+
+    /* Transporte voador: result correct → carry slot da coluna seguinte
+       (que está acima e à esquerda em colsRender). */
+    @keyframes fly-carry-up-left {
+      0%   { transform: translate(0, 0) scale(0.7); opacity: 0; }
+      20%  { transform: translate(-12px, -20px) scale(1.1); opacity: 1; }
+      60%  { transform: translate(-50px, -110px) scale(1.05); opacity: 1; }
+      100% { transform: translate(-72px, -150px) scale(0.9); opacity: 0; }
+    }
+    .anim-fly-carry { animation: fly-carry-up-left 0.85s ease-out forwards; pointer-events: none; }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+    }
+
+    @keyframes owl-blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    .owl-idle { animation: owl-blink 6s infinite; }
+
+    @keyframes owl-hop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .owl-happy { animation: owl-hop 0.5s ease-in-out 2; }
+
+    @keyframes points-pop {
+      0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+      20%  { transform: translateY(-6px) scale(1.1); opacity: 1; }
+      100% { transform: translateY(-44px) scale(1); opacity: 0; }
+    }
+    .anim-points-pop { animation: points-pop 0.9s ease-out forwards; }
+
+    @keyframes points-bump {
+      0%, 100% { transform: scale(1); }
+      40%      { transform: scale(1.18); }
+    }
+    .anim-points-bump { animation: points-bump 0.35s ease-out; }
+
+    /* "Manuscrito" — bordas e sombras */
+    .paper-card {
+      background: #fffef5;
+      border: 2px solid var(--ink-secondary);
+      border-radius: 14px 8px 12px 10px;
+      box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .paper-button {
+      background: #fffef5;
+      border: 2px solid var(--ink-secondary);
+      border-radius: 10px 14px 8px 12px;
+      transition: transform 0.1s, box-shadow 0.1s;
+      cursor: pointer;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.08);
+    }
+    .paper-button:hover { transform: translateY(-1px); box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.12); }
+    .paper-button:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08); }
+    .paper-button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* Slot states */
+    .slot-empty {
+      border: 2px dashed var(--ink-secondary);
+      background: rgba(255, 255, 240, 0.5);
+      color: var(--ink-secondary);
+    }
+    .slot-active {
+      border: 2px solid var(--ink-primary);
+      background: #fffef5;
+    }
+    .slot-correct {
+      border: 2px solid var(--success);
+      background: #eaf5e1;
+      color: #2c5012;
+    }
+    .slot-wrong {
+      border: 2px solid var(--error);
+      background: #fadcdc;
+      color: var(--error);
+    }
+    .slot-revealed {
+      border: 2px solid var(--hint);
+      background: #fff0db;
+      color: var(--hint);
+    }
+
+    /* Wrapper que dá hit area táctil generosa (56px na largura, onde o dedo
+       aterra) ao slot circular pequeno, sem lhe agigantar o visual nem
+       desperdiçar espaço vertical na linha dos transportes. */
+    .slot-hit-area {
+      width: 56px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Tabela: barras verticais entre colunas, com aspecto manuscrito.
+       Apenas as barras interiores — sem moldura exterior. */
+    .table-grid {
+      position: relative;
+    }
+    .col-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      border-left: 2px solid var(--ink-secondary);
+      opacity: 0.32;
+      pointer-events: none;
+    }
+    .col-divider.tilt-a { transform: translateX(-1px) rotate(0.6deg); }
+    .col-divider.tilt-b { transform: translateX(-1px) rotate(-0.5deg); }
+    .col-divider.tilt-c { transform: translateX(-1px) rotate(0.35deg); }
+
+    /* Barras horizontais manuscritas, equivalentes às .col-divider verticais.
+       Substituem os <hr> "duros" por algo mais coerente com o caderno. */
+    .row-divider {
+      height: 0;
+      border-top: 2px solid var(--ink-secondary);
+      opacity: 0.42;
+      margin: 8px 0;
+      transform: rotate(-0.3deg);
+    }
+    .row-divider-double {
+      height: 5px;
+      border-top: 2px solid var(--ink-primary);
+      border-bottom: 2px solid var(--ink-primary);
+      opacity: 0.55;
+      margin: 8px 0;
+      transform: rotate(0.35deg);
+    }
+    /* Variante mais subtil para separar parcelas entre si — ainda menos
+       peso para não saturar a tabela. */
+    .row-divider-soft {
+      height: 0;
+      border-top: 1.5px solid var(--ink-secondary);
+      opacity: 0.28;
+      margin: 4px 0;
+      transform: rotate(-0.2deg);
+    }
+    .row-divider-soft.tilt-h-b { transform: rotate(0.25deg); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useReducer, useCallback, useMemo } = React;
+
+    const { LEVELS, generateExercise, validateSlot, loadState, saveState, resetState, computeColumnSums, computePointsForExercise } = window.ContasLogic;
+
+    function isCarryNeededForCol(expected, col) {
+      return expected.carries[col] > 0;
+    }
+
+    function nextActiveSlotCol(activeSlot, expected, numCols) {
+      const { type, col } = activeSlot;
+      if (type === 'result') {
+        if (col + 1 >= numCols) return null;
+        if (isCarryNeededForCol(expected, col)) {
+          return { type: 'carry', col: col + 1 };
+        } else {
+          return { type: 'result', col: col + 1 };
+        }
+      }
+      if (type === 'carry') {
+        return { type: 'result', col };
+      }
+      return null;
+    }
+
+    function buildHintForError(activeSlot, exercise, attempt) {
+      const { type, col } = activeSlot;
+      const { expected, parcelas } = exercise;
+      if (attempt === 1) {
+        return { kind: 'soft', text: 'Hmm, olha bem 🤔' };
+      }
+      if (type === 'carry') {
+        if (expected.carries[col - 1] > 0) {
+          return { kind: 'specific', text: `Esta coluna teve transporte da coluna anterior. Põe 1.` };
+        } else {
+          return { kind: 'specific', text: 'Esta coluna não chegou a 10 — não há transporte aqui.' };
+        }
+      }
+      const carryFromPrev = col > 0 ? (expected.carries[col - 1] || 0) : 0;
+      const colDigits = parcelas.map(p => Math.floor(p / Math.pow(10, col)) % 10);
+      const carryStr = carryFromPrev > 0 ? ` + ${carryFromPrev}` : '';
+      return {
+        kind: 'specific',
+        text: `Soma outra vez: ${colDigits.join(' + ')}${carryStr} dá quanto?`,
+      };
+    }
+
+    function Mascote({ state }) {
+      // state: 'idle' | 'happy' | 'thinking' | 'worried' | 'celebrating'
+
+      const animClass = {
+        idle: 'owl-idle',
+        happy: 'owl-happy',
+        thinking: '',
+        worried: '',
+        celebrating: 'owl-happy',
+      }[state] || 'owl-idle';
+
+      const tilt = {
+        idle: 0,
+        happy: 0,
+        thinking: -10,
+        worried: 8,
+        celebrating: 0,
+      }[state] || 0;
+
+      return (
+        <div className="relative inline-block" style={{ width: 80, height: 80 }}>
+          <div
+            className={animClass}
+            style={{
+              fontSize: 64,
+              lineHeight: 1,
+              transform: `rotate(${tilt}deg)`,
+              transition: 'transform 0.3s ease-out',
+              textAlign: 'center',
+            }}
+          >
+            🦉
+          </div>
+          {state === 'celebrating' && (
+            <>
+              <span style={{ position: 'absolute', top: -8, left: -8, fontSize: 20, color: 'var(--magic-gold)' }} className="anim-star">⭐</span>
+              <span style={{ position: 'absolute', top: -8, right: -8, fontSize: 20, color: 'var(--magic-gold)', animationDelay: '0.1s' }} className="anim-star">✨</span>
+              <span style={{ position: 'absolute', bottom: -4, left: 50, fontSize: 16 }} className="anim-star">⭐</span>
+            </>
+          )}
+          {state === 'happy' && (
+            <span style={{ position: 'absolute', top: -8, right: -4, fontSize: 18 }} className="anim-star">⭐</span>
+          )}
+          {state === 'thinking' && (
+            <span style={{ position: 'absolute', top: -10, right: -4, fontSize: 18, color: 'var(--ink-secondary)' }}>🤔</span>
+          )}
+        </div>
+      );
+    }
+
+    function Header({ level, points, mascoteState, pointsBurst, onOpenParental }) {
+      // points: contador acumulativo (nunca decresce). pointsBurst: número (ex. 10/5)
+      // que aparece a flutuar quando um exercício é concluído; null = sem burst activo.
+      const counterClass = `handwritten ${pointsBurst != null ? 'anim-points-bump' : ''}`;
+      return (
+        <header className="w-full max-w-3xl flex items-center justify-between px-4 py-3 mb-4">
+          <div className="flex items-center gap-3">
+            <Mascote state={mascoteState} />
+            <div>
+              <h1 className="handwritten text-3xl md:text-4xl m-0" style={{ color: 'var(--ink-primary)' }}>
+                Contas Em Pé
+              </h1>
+              <p className="text-sm m-0" style={{ color: 'var(--ink-secondary)' }}>
+                Nível <strong>{level}</strong> / 12
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div
+              className="relative flex items-baseline gap-1"
+              role="status"
+              aria-label={`${points} pontos`}
+            >
+              <span
+                key={`pts-${points}`}
+                className={counterClass}
+                style={{ fontSize: 36, color: 'var(--magic-gold)', lineHeight: 1 }}
+              >
+                {points}
+              </span>
+              <span className="handwritten" style={{ fontSize: 18, color: 'var(--ink-secondary)' }}>pts</span>
+              {pointsBurst != null && (
+                <span
+                  key={`burst-${pointsBurst}-${points}`}
+                  className="handwritten anim-points-pop"
+                  style={{
+                    position: 'absolute',
+                    right: -4,
+                    top: -8,
+                    fontSize: 22,
+                    color: 'var(--success)',
+                    pointerEvents: 'none',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  +{pointsBurst}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={onOpenParental}
+              aria-label="Definições"
+              className="paper-button px-3 py-2 text-2xl"
+              style={{ borderRadius: 50 }}
+            >
+              ⚙
+            </button>
+          </div>
+        </header>
+      );
+    }
+
+    function Numpad({ onPress, disabled }) {
+      const keys = [
+        { label: '1', value: 1 }, { label: '2', value: 2 }, { label: '3', value: 3 },
+        { label: '4', value: 4 }, { label: '5', value: 5 }, { label: '6', value: 6 },
+        { label: '7', value: 7 }, { label: '8', value: 8 }, { label: '9', value: 9 },
+        null, { label: '0', value: 0 }, { label: '⌫', value: 'erase' },
+      ];
+
+      const rotations = ['-1deg', '0.5deg', '-0.5deg', '0.8deg', '-0.8deg', '0.3deg', '-0.3deg', '0.6deg', '-0.6deg', '0deg', '-0.4deg', '0.4deg'];
+
+      return (
+        <div
+          className="paper-card p-4 grid grid-cols-3 gap-3"
+          style={{ width: 'fit-content', margin: '0 auto', background: 'var(--paper-bg)' }}
+        >
+          {keys.map((k, i) => {
+            if (!k) return <div key={i} />;
+            const isErase = k.value === 'erase';
+            return (
+              <button
+                key={i}
+                onClick={() => !disabled && onPress(k.value)}
+                disabled={disabled}
+                aria-label={isErase ? 'Apagar' : `Algarismo ${k.label}`}
+                className="paper-button"
+                style={{
+                  width: 64,
+                  height: 64,
+                  fontSize: isErase ? 28 : 36,
+                  transform: `rotate(${rotations[i]})`,
+                  color: isErase ? 'var(--error)' : 'var(--ink-primary)',
+                  background: isErase ? '#fadcdc' : '#fffef5',
+                  borderColor: isErase ? 'var(--error)' : 'var(--ink-secondary)',
+                }}
+              >
+                {k.label}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Índice 0 = unidades. M = milhares, DM = dezenas de milhar, CM = centenas
+    // de milhar. Cobre até 6 dígitos no resultado, suficiente para nível 12
+    // (4 dígitos × 4 parcelas pode estender o resultado a 6 dígitos com
+    // transportes em cadeia).
+    const COL_LABELS = ['U', 'D', 'C', 'M', 'DM', 'CM'];
+
+    function Slot({ value, state, isActive, onClick, size = 'large', ariaLabel }) {
+      const stateClass = {
+        empty: 'slot-empty',
+        pending: 'slot-active',
+        correct: 'slot-correct',
+        wrong: 'slot-wrong anim-shake',
+        revealed: 'slot-revealed',
+      }[state] || 'slot-empty';
+
+      const activeClass = isActive ? 'anim-pulse' : '';
+
+      // Slot grande: rectângulo manuscrito 56x56 (resultado).
+      // Slot pequeno (transporte): círculo 36x36 — é só um apontamento de
+      // lembrete por cima da coluna, não tem o peso dos algarismos da conta.
+      // Hit area transparente de 56x56 garante alvo táctil para criança.
+      const isSmall = size !== 'large';
+      const dim = isSmall
+        ? { w: 36, h: 36, fz: 16, br: '50%' }
+        : { w: 56, h: 56, fz: 32, br: '12px 8px 14px 10px' };
+
+      const slot = (
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label={ariaLabel}
+          onClick={onClick}
+          onKeyDown={(e) => { if (e.key === 'Enter') onClick && onClick(); }}
+          className={`handwritten flex items-center justify-center ${stateClass} ${activeClass}`}
+          style={{
+            width: dim.w,
+            height: dim.h,
+            fontSize: dim.fz,
+            borderRadius: dim.br,
+            cursor: state === 'correct' || state === 'revealed' ? 'default' : 'pointer',
+            userSelect: 'none',
+          }}
+        >
+          {value === null || value === undefined ? '' : (
+            <span key={`v-${state}-${value}`} className="anim-pencil" style={{ display: 'inline-block', lineHeight: 1.2 }}>
+              {value}
+            </span>
+          )}
+        </div>
+      );
+
+      if (isSmall) {
+        return (
+          <div className="slot-hit-area" onClick={onClick}>{slot}</div>
+        );
+      }
+      return slot;
+    }
+
+    const COL_NAMES = ['unidades', 'dezenas', 'centenas', 'milhares'];
+
+    function Tabela({ exercise, level, inputs, slotStates, activeSlot, onSlotClick }) {
+      if (!exercise) return null;
+      const numCols = exercise.expected.results.length;
+      const colsRender = Array.from({ length: numCols }, (_, i) => numCols - 1 - i);
+
+      function slotKey(type, col) { return `${type}-${col}`; }
+      function getSlotState(type, col) { return slotStates[slotKey(type, col)] || 'empty'; }
+      function isActive(type, col) { return activeSlot && activeSlot.type === type && activeSlot.col === col; }
+      function getValue(type, col) {
+        if (type === 'result') return inputs.results[col] !== undefined ? inputs.results[col] : null;
+        return inputs.carries[col] !== undefined ? inputs.carries[col] : null;
+      }
+
+      // Barras verticais interiores: numCols-1 separadores entre as colunas
+      // (i = 1..numCols-1). Posição em x usa a mesma fórmula do CSS grid:
+      // a primeira coluna (40px) é a label do "+", as restantes têm largura
+      // (100% - 40px) / numCols.
+      const tilts = ['tilt-a', 'tilt-b', 'tilt-c', 'tilt-a'];
+      const dividers = Array.from({ length: numCols - 1 }, (_, i) => {
+        const pos = i + 1; // 1..numCols-1
+        return (
+          <div
+            key={`div-${i}`}
+            className={`col-divider ${tilts[i % tilts.length]}`}
+            style={{ left: `calc(40px + ${pos} * (100% - 40px) / ${numCols})` }}
+          />
+        );
+      });
+
+      // Título manuscrito da conta a fazer, em formato horizontal — para a
+      // criança ler primeiro a operação completa antes de a desmontar nas
+      // colunas. Usa as parcelas geradas; "= ?" enquanto não está resolvido.
+      const exerciseTitle = exercise.parcelas.join(' + ') + ' = ?';
+
+      // Largura mínima da tabela escala com o número de colunas, para os
+      // slots de resultado (56px) terem sempre pelo menos ~16px de ar entre
+      // si. Sem isto, a partir de 4 colunas os slots ficavam colados.
+      // Fórmula: padding (48) + label "+" (40) + numCols × largura mínima
+      // por coluna (72 = slot 56 + 16 de ar).
+      const minTableWidth = Math.max(320, 48 + 40 + numCols * 72);
+
+      return (
+        <div className="paper-card p-6" style={{ background: 'rgba(255, 255, 245, 0.92)', minWidth: minTableWidth }}>
+          <p
+            className="handwritten text-center m-0 mb-4"
+            style={{ fontSize: 28, color: 'var(--ink-secondary)', letterSpacing: '0.02em' }}
+            aria-label={`A conta é ${exercise.parcelas.join(' mais ')} igual a quanto`}
+          >
+            {exerciseTitle}
+          </p>
+          <div className="table-grid" style={{ paddingRight: 0 }}>
+            {dividers}
+
+            <div className="grid mb-2" style={{ gridTemplateColumns: `40px repeat(${numCols}, 1fr)`, columnGap: 0, rowGap: '0.5rem' }}>
+              <div></div>
+              {colsRender.map(idx => (
+                <div key={idx} className="text-center handwritten text-xl" style={{ color: 'var(--ink-secondary)' }}>
+                  {COL_LABELS[idx] || '?'}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid mb-2" style={{ gridTemplateColumns: `40px repeat(${numCols}, 1fr)`, columnGap: 0, rowGap: '0.5rem' }}>
+              <div></div>
+              {colsRender.map(idx => {
+                if (idx === 0) return <div key={idx} />;
+                return (
+                  <div key={idx} className="flex justify-center">
+                    <Slot
+                      value={getValue('carry', idx)}
+                      state={getSlotState('carry', idx)}
+                      isActive={isActive('carry', idx)}
+                      onClick={() => onSlotClick && onSlotClick('carry', idx)}
+                      size="small"
+                      ariaLabel={`Transporte para a coluna das ${COL_NAMES[idx] || ''}`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="row-divider" aria-hidden="true" />
+
+            {exercise.parcelas.map((p, parcelaIdx) => {
+              const padded = String(p).padStart(numCols, ' ');
+              const tiltClass = parcelaIdx % 2 === 0 ? '' : 'tilt-h-b';
+              return (
+                <React.Fragment key={parcelaIdx}>
+                  {parcelaIdx > 0 && <div className={`row-divider-soft ${tiltClass}`} aria-hidden="true" />}
+                  <div className="grid mb-1" style={{ gridTemplateColumns: `40px repeat(${numCols}, 1fr)`, columnGap: 0, rowGap: '0.5rem' }}>
+                    <div className="handwritten text-3xl text-right" style={{ color: 'var(--ink-secondary)' }}>
+                      {parcelaIdx === exercise.parcelas.length - 1 ? '+' : ''}
+                    </div>
+                    {colsRender.map(idx => {
+                      const ch = padded[numCols - 1 - idx];
+                      return (
+                        <div key={idx} className="text-center handwritten text-4xl" style={{ color: 'var(--ink-primary)', minHeight: 48 }}>
+                          {ch === ' ' ? '' : ch}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+
+            <div className="row-divider-double" aria-hidden="true" />
+
+            <div className="grid" style={{ gridTemplateColumns: `40px repeat(${numCols}, 1fr)`, columnGap: 0, rowGap: '0.5rem' }}>
+              <div></div>
+              {colsRender.map(idx => {
+                const slotState = getSlotState('result', idx);
+                const carryOut = exercise.expected.carries[idx] || 0;
+                // Animação do "1" voador: dispara ao entrar em correct (não em
+                // wrong/revealed/empty) e só nas colunas onde há carry para a
+                // coluna seguinte. O key incorpora o exercício e o estado para
+                // re-mountar entre exercícios mas não a cada render.
+                const showFlyingCarry = slotState === 'correct' && carryOut > 0 && idx < numCols - 1;
+                return (
+                  <div key={idx} className="flex justify-center" style={{ position: 'relative' }}>
+                    <Slot
+                      value={getValue('result', idx)}
+                      state={slotState}
+                      isActive={isActive('result', idx)}
+                      onClick={() => onSlotClick && onSlotClick('result', idx)}
+                      size="large"
+                      ariaLabel={`Resultado da coluna das ${COL_NAMES[idx] || ''}`}
+                    />
+                    {showFlyingCarry && (
+                      <span
+                        key={`fly-${exercise.parcelas.join('-')}-${idx}`}
+                        aria-hidden="true"
+                        className="handwritten anim-fly-carry"
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          left: '50%',
+                          marginLeft: -10,
+                          fontSize: 24,
+                          color: 'var(--magic-gold)',
+                          textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                          zIndex: 5,
+                        }}
+                      >
+                        {carryOut}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function FeedbackHint({ hint }) {
+      if (!hint) return null;
+      const colors = {
+        soft: { bg: '#fff5e6', border: 'var(--hint)', icon: '🤔' },
+        specific: { bg: '#fff5e6', border: 'var(--hint)', icon: '💡' },
+        reveal: { bg: '#fff0db', border: 'var(--hint)', icon: '✨' },
+      };
+      const c = colors[hint.kind] || colors.soft;
+
+      return (
+        <div
+          className="paper-card flex items-center gap-3 px-4 py-3 my-3"
+          style={{ background: c.bg, borderColor: c.border, maxWidth: 480 }}
+        >
+          <span style={{ fontSize: 28 }}>{c.icon}</span>
+          <p className="m-0 handwritten text-2xl" style={{ color: 'var(--ink-primary)' }}>
+            {hint.text}
+          </p>
+        </div>
+      );
+    }
+
+    const CONFETTI_COLORS = ['#d4a017', '#7fb069', '#e8a05c', '#c47474', '#5c4a2a', '#2a3e5c'];
+
+    function Confetti({ count = 18 }) {
+      // Geração estável uma vez por mount — useMemo garante que delay/cor/posição
+      // não se recalculam em re-renders, evitando flickering das peças.
+      const pieces = useMemo(() => Array.from({ length: count }, (_, i) => ({
+        left: Math.random() * 100,
+        delay: Math.random() * 0.3,
+        rotation: Math.random() * 360,
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        size: 7 + Math.random() * 7,
+        duration: 1.4 + Math.random() * 0.6,
+      })), [count]);
+      return (
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          {pieces.map((c, i) => (
+            <span
+              key={i}
+              style={{
+                position: 'absolute',
+                top: -20,
+                left: `${c.left}%`,
+                width: c.size,
+                height: c.size,
+                background: c.color,
+                animation: `confetti-fall ${c.duration}s ease-out ${c.delay}s forwards`,
+                transform: `rotate(${c.rotation}deg)`,
+                borderRadius: 2,
+              }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    function ExerciseCompleteModal({ open, firstTry, pointsEarned, onNext }) {
+      if (!open) return null;
+      const earned = pointsEarned != null ? pointsEarned : computePointsForExercise(firstTry);
+      return (
+        <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, background: 'rgba(42, 62, 92, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <div className="paper-card p-8 flex flex-col items-center gap-4" style={{ minWidth: 320, maxWidth: 480, background: '#fffef5', position: 'relative' }}>
+            <div style={{ fontSize: 64 }}>{firstTry ? '🎉' : '✨'}</div>
+            <h2 className="handwritten text-4xl m-0" style={{ color: 'var(--ink-primary)' }}>
+              {firstTry ? 'Acertaste à 1ª!' : 'Boa, conseguiste!'}
+            </h2>
+            <p className="handwritten text-2xl m-0" style={{ color: 'var(--magic-gold)' }}>
+              + {earned} pontos ✨
+            </p>
+            <button onClick={onNext} className="paper-button px-6 py-3 text-2xl mt-2" style={{ background: 'var(--success)', color: 'white' }}>
+              Próximo exercício
+            </button>
+          </div>
+          {firstTry && <Confetti />}
+        </div>
+      );
+    }
+
+    function LevelUpModal({ open, nextLevel, onAccept, onDecline }) {
+      if (!open) return null;
+      return (
+        <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, background: 'rgba(42, 62, 92, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <div className="paper-card p-8 flex flex-col items-center gap-4" style={{ minWidth: 340, maxWidth: 500, background: '#fffef5' }}>
+            <div style={{ fontSize: 80 }}>🦉🎉</div>
+            <h2 className="handwritten text-4xl m-0 text-center" style={{ color: 'var(--ink-primary)' }}>Acertaste 5 seguidas!</h2>
+            <p className="handwritten text-2xl m-0 text-center" style={{ color: 'var(--ink-secondary)' }}>
+              Estás pronto para o Nível {nextLevel}?
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button onClick={onAccept} className="paper-button px-6 py-3 text-2xl" style={{ background: 'var(--success)', color: 'white' }}>Sim! ✨</button>
+              <button onClick={onDecline} className="paper-button px-6 py-3 text-xl" style={{ background: 'var(--paper-bg)' }}>Ainda não</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function ParentalPanel({ open, level, onSetLevel, onReset, onClose }) {
+      if (!open) return null;
+      const [confirmReset, setConfirmReset] = useState(false);
+
+      return (
+        <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, background: 'rgba(42, 62, 92, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }} onClick={onClose}>
+          <div className="paper-card p-6 flex flex-col gap-4" style={{ minWidth: 340, maxWidth: 480, background: '#fffef5' }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h2 className="handwritten text-3xl m-0" style={{ color: 'var(--ink-primary)' }}>⚙ Definições</h2>
+              <button onClick={onClose} className="paper-button px-3 py-1 text-xl" aria-label="Fechar">×</button>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2" style={{ color: 'var(--ink-secondary)' }}>Nível actual</label>
+              <div className="flex items-center gap-2">
+                <button onClick={() => onSetLevel(Math.max(1, level - 1))} className="paper-button px-3 py-2 text-2xl" disabled={level <= 1}>−</button>
+                <div className="paper-card flex items-center justify-center px-4 py-2 handwritten text-3xl" style={{ minWidth: 80 }}>{level} / 12</div>
+                <button onClick={() => onSetLevel(Math.min(12, level + 1))} className="paper-button px-3 py-2 text-2xl" disabled={level >= 12}>+</button>
+              </div>
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px dashed var(--ink-secondary)', margin: '8px 0' }} />
+
+            {!confirmReset ? (
+              <button onClick={() => setConfirmReset(true)} className="paper-button px-4 py-2" style={{ color: 'var(--error)' }}>Reset progresso</button>
+            ) : (
+              <div className="flex flex-col gap-2 paper-card p-3" style={{ background: '#fadcdc' }}>
+                <p className="m-0 text-sm" style={{ color: 'var(--error)' }}>Apagar todo o progresso? Não há volta atrás.</p>
+                <div className="flex gap-2">
+                  <button onClick={() => { onReset(); setConfirmReset(false); onClose(); }} className="paper-button px-4 py-2" style={{ background: 'var(--error)', color: 'white' }}>Sim, apagar</button>
+                  <button onClick={() => setConfirmReset(false)} className="paper-button px-4 py-2">Cancelar</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function VerificarButton({ onClick, visible }) {
+      if (!visible) return null;
+      return (
+        <button
+          onClick={onClick}
+          className="paper-button px-6 py-3 text-2xl"
+          style={{ background: 'var(--magic-gold)', color: 'white', animation: 'pulse-soft 1.4s ease-out infinite' }}
+        >
+          Verificar ✨
+        </button>
+      );
+    }
+
+    function App() {
+      const [persisted, setPersisted] = useState(() => loadState());
+      const level = persisted.level;
+      const streak = persisted.streak;
+      const points = persisted.points;
+      const levelConfig = LEVELS[level - 1];
+      const mode = levelConfig.mode;
+      const [pointsBurst, setPointsBurst] = useState(null);
+
+      const [exercise, setExercise] = useState(() => generateExercise(levelConfig));
+      const numCols = exercise.expected.results.length;
+
+      const [inputs, setInputs] = useState({ results: [], carries: [] });
+      const [slotStates, setSlotStates] = useState({});
+      const [activeSlot, setActiveSlot] = useState({ type: 'result', col: 0 });
+      const [attempts, setAttempts] = useState({});
+      const [hint, setHint] = useState(null);
+      const [exerciseDirty, setExerciseDirty] = useState(false);
+      const [mascoteState, setMascoteState] = useState('idle');
+      const [completeModalOpen, setCompleteModalOpen] = useState(false);
+      const [levelUpOpen, setLevelUpOpen] = useState(false);
+      const [parentalOpen, setParentalOpen] = useState(false);
+
+      function slotKey(type, col) { return `${type}-${col}`; }
+
+      function writeSlotValue(prev, slot, v) {
+        const next = { results: [...prev.results], carries: [...prev.carries] };
+        if (slot.type === 'result') next.results[slot.col] = v;
+        else next.carries[slot.col] = v;
+        return next;
+      }
+
+      function clearSlot(prev, slot) {
+        const next = { results: [...prev.results], carries: [...prev.carries] };
+        if (slot.type === 'result') next.results[slot.col] = null;
+        else next.carries[slot.col] = null;
+        return next;
+      }
+
+      function getMustFillSlotKeys() {
+        const keys = [];
+        for (let col = 0; col < numCols; col++) {
+          keys.push(slotKey('result', col));
+        }
+        return keys;
+      }
+
+      function getAllValidatableKeys() {
+        const keys = [];
+        for (let col = 0; col < numCols; col++) {
+          keys.push(slotKey('result', col));
+          if (col >= 1) keys.push(slotKey('carry', col));
+        }
+        return keys;
+      }
+
+      function allSlotsFilled() {
+        return getMustFillSlotKeys().every(k => {
+          const [type, colStr] = k.split('-');
+          const col = parseInt(colStr, 10);
+          const v = type === 'result' ? inputs.results[col] : inputs.carries[col];
+          return v !== null && v !== undefined;
+        });
+      }
+
+      function autoAdvanceFocus(current) {
+        const all = getAllValidatableKeys();
+        const currentKey = slotKey(current.type, current.col);
+        const idx = all.indexOf(currentKey);
+        if (idx < 0 || idx >= all.length - 1) return null;
+        const [type, colStr] = all[idx + 1].split('-');
+        return { type, col: parseInt(colStr, 10) };
+      }
+
+      function startNewExercise(newLevel = level) {
+        const cfg = LEVELS[newLevel - 1];
+        const ex = generateExercise(cfg);
+        setExercise(ex);
+        setInputs({ results: [], carries: [] });
+        setSlotStates({});
+        setAttempts({});
+        setHint(null);
+        setExerciseDirty(false);
+        setMascoteState('idle');
+        setCompleteModalOpen(false);
+        setActiveSlot({ type: 'result', col: 0 });
+      }
+
+      function completeExercise() {
+        const firstTry = !exerciseDirty;
+        const earned = computePointsForExercise(firstTry);
+        setMascoteState('celebrating');
+        const newStreak = firstTry ? streak + 1 : 0;
+        const newPersisted = {
+          ...persisted,
+          streak: newStreak,
+          points: persisted.points + earned,
+          totalAttempts: persisted.totalAttempts + 1,
+          totalCorrectFirstTry: persisted.totalCorrectFirstTry + (firstTry ? 1 : 0),
+        };
+        setPersisted(newPersisted);
+        saveState(newPersisted);
+        setPointsBurst(earned);
+        setTimeout(() => setPointsBurst(null), 900);
+        setCompleteModalOpen(true);
+        if (newStreak >= 5 && level < 12) {
+          setTimeout(() => {
+            setCompleteModalOpen(false);
+            setLevelUpOpen(true);
+          }, 1500);
+        }
+      }
+
+      function handleNumpadPress(v) {
+        if (!activeSlot || completeModalOpen || levelUpOpen || parentalOpen) return;
+
+        if (mode === 'fim') {
+          if (v === 'erase') {
+            const key = slotKey(activeSlot.type, activeSlot.col);
+            if (slotStates[key] === 'correct') return;
+            setInputs(prev => clearSlot(prev, activeSlot));
+            setSlotStates(prev => ({ ...prev, [key]: 'empty' }));
+            return;
+          }
+          setInputs(prev => writeSlotValue(prev, activeSlot, v));
+          const key = slotKey(activeSlot.type, activeSlot.col);
+          setSlotStates(prev => ({ ...prev, [key]: 'pending' }));
+          const next = autoAdvanceFocus(activeSlot);
+          if (next) setActiveSlot(next);
+          return;
+        }
+
+        // Modo "col": validação imediata
+        if (v === 'erase') {
+          const key = slotKey(activeSlot.type, activeSlot.col);
+          if (slotStates[key] === 'correct') return;
+          setInputs(prev => clearSlot(prev, activeSlot));
+          setSlotStates(prev => ({ ...prev, [key]: 'empty' }));
+          return;
+        }
+
+        const expectedValue = activeSlot.type === 'result'
+          ? exercise.expected.results[activeSlot.col]
+          : (exercise.expected.carries[activeSlot.col - 1] || 0);
+
+        const result = validateSlot(v, expectedValue);
+        const key = slotKey(activeSlot.type, activeSlot.col);
+
+        setInputs(prev => writeSlotValue(prev, activeSlot, v));
+
+        if (result.ok) {
+          setSlotStates(prev => ({ ...prev, [key]: 'correct' }));
+          setHint(null);
+          setMascoteState('happy');
+          const next = nextActiveSlotCol(activeSlot, exercise.expected, numCols);
+          if (next) {
+            setTimeout(() => setMascoteState('idle'), 600);
+            setTimeout(() => setActiveSlot(next), 300);
+          } else {
+            setTimeout(() => completeExercise(), 500);
+          }
+        } else {
+          setSlotStates(prev => ({ ...prev, [key]: 'wrong' }));
+          setMascoteState('worried');
+          setExerciseDirty(true);
+          const currentAttempts = (attempts[key] || 0) + 1;
+          setAttempts(prev => ({ ...prev, [key]: currentAttempts }));
+
+          if (currentAttempts >= 3) {
+            setTimeout(() => {
+              setInputs(prev => writeSlotValue(prev, activeSlot, expectedValue));
+              setSlotStates(prev => ({ ...prev, [key]: 'revealed' }));
+              setHint({ kind: 'reveal', text: `Era um ${expectedValue}. Vamos seguir!` });
+              setTimeout(() => {
+                const next = nextActiveSlotCol(activeSlot, exercise.expected, numCols);
+                if (next) {
+                  setActiveSlot(next);
+                  setHint(null);
+                  setMascoteState('idle');
+                } else {
+                  completeExercise();
+                }
+              }, 1500);
+            }, 500);
+          } else {
+            setHint(buildHintForError(activeSlot, exercise, currentAttempts));
+            setTimeout(() => {
+              setInputs(prev => clearSlot(prev, activeSlot));
+              setSlotStates(prev => ({ ...prev, [key]: 'empty' }));
+              setMascoteState('thinking');
+              setTimeout(() => setMascoteState('idle'), 800);
+            }, 500);
+          }
+        }
+      }
+
+      function handleVerificar() {
+        if (mode !== 'fim') return;
+        const allKeys = getAllValidatableKeys();
+        const newSlotStates = { ...slotStates };
+        const newAttempts = { ...attempts };
+        let allOk = true;
+
+        allKeys.forEach(k => {
+          const [type, colStr] = k.split('-');
+          const col = parseInt(colStr, 10);
+          const userValRaw = type === 'result' ? inputs.results[col] : inputs.carries[col];
+          const userEmpty = (userValRaw === null || userValRaw === undefined);
+          const valForCheck = (type === 'carry' && userEmpty) ? 0 : userValRaw;
+          const expectedVal = type === 'result' ? exercise.expected.results[col] : exercise.expected.carries[col - 1];
+          const r = validateSlot(valForCheck, expectedVal);
+          if (r.ok) {
+            if (!(type === 'carry' && userEmpty)) {
+              newSlotStates[k] = 'correct';
+            }
+          } else {
+            newSlotStates[k] = 'wrong';
+            allOk = false;
+            newAttempts[k] = (newAttempts[k] || 0) + 1;
+          }
+        });
+
+        setSlotStates(newSlotStates);
+        setAttempts(newAttempts);
+
+        if (allOk) {
+          setMascoteState('celebrating');
+          setTimeout(() => completeExercise(), 600);
+          return;
+        }
+
+        setExerciseDirty(true);
+        setMascoteState('worried');
+        const maxAttempts = Math.max(...Object.values(newAttempts).filter(n => typeof n === 'number'));
+
+        if (maxAttempts >= 3) {
+          const reveals = { results: [...inputs.results], carries: [...inputs.carries] };
+          const finalStates = { ...newSlotStates };
+          allKeys.forEach(k => {
+            if (newSlotStates[k] === 'wrong') {
+              const [type, colStr] = k.split('-');
+              const col = parseInt(colStr, 10);
+              const expectedVal = type === 'result' ? exercise.expected.results[col] : exercise.expected.carries[col - 1];
+              if (type === 'result') reveals.results[col] = expectedVal;
+              else reveals.carries[col] = expectedVal;
+              finalStates[k] = 'revealed';
+            }
+          });
+          setInputs(reveals);
+          setSlotStates(finalStates);
+          setHint({ kind: 'reveal', text: 'Estavam quase! Vê os algarismos a laranja e segue.' });
+          setTimeout(() => completeExercise(), 2500);
+        } else {
+          setHint({
+            kind: maxAttempts === 1 ? 'soft' : 'specific',
+            text: maxAttempts === 1
+              ? 'Quase! Olha bem nas colunas marcadas a vermelho.'
+              : 'Confere coluna a coluna — alguma soma não bate certo.',
+          });
+          setTimeout(() => {
+            const cleared = { results: [...inputs.results], carries: [...inputs.carries] };
+            const cleaning = { ...newSlotStates };
+            allKeys.forEach(k => {
+              if (newSlotStates[k] === 'wrong') {
+                const [type, colStr] = k.split('-');
+                const col = parseInt(colStr, 10);
+                if (type === 'result') cleared.results[col] = null;
+                else cleared.carries[col] = null;
+                cleaning[k] = 'empty';
+              }
+            });
+            setInputs(cleared);
+            setSlotStates(cleaning);
+            setMascoteState('thinking');
+            setTimeout(() => setMascoteState('idle'), 800);
+          }, 1200);
+        }
+      }
+
+      function handleNext() {
+        setCompleteModalOpen(false);
+        startNewExercise();
+      }
+
+      function handleSlotClick(type, col) {
+        if (mode === 'col') return;
+        setActiveSlot({ type, col });
+      }
+
+      function handleSetLevel(newLevel) {
+        const next = { ...persisted, level: newLevel, streak: 0 };
+        setPersisted(next);
+        saveState(next);
+        startNewExercise(newLevel);
+      }
+
+      function handleResetProgress() {
+        resetState();
+        const fresh = loadState();
+        setPersisted(fresh);
+        startNewExercise(fresh.level);
+      }
+
+      function handleAcceptLevelUp() {
+        const newLevel = Math.min(12, level + 1);
+        const next = { ...persisted, level: newLevel, streak: 0 };
+        setPersisted(next);
+        saveState(next);
+        setLevelUpOpen(false);
+        startNewExercise(newLevel);
+      }
+
+      function handleDeclineLevelUp() {
+        const next = { ...persisted, streak: 0 };
+        setPersisted(next);
+        saveState(next);
+        setLevelUpOpen(false);
+        startNewExercise();
+      }
+
+      return (
+        <div className="min-h-screen flex flex-col items-center p-4">
+          <Header
+            level={level}
+            points={points}
+            mascoteState={mascoteState}
+            pointsBurst={pointsBurst}
+            onOpenParental={() => setParentalOpen(true)}
+          />
+
+          <div className="flex flex-row items-start justify-center gap-8 flex-wrap my-2 w-full max-w-5xl">
+            <Tabela
+              exercise={exercise}
+              level={level}
+              inputs={inputs}
+              slotStates={slotStates}
+              activeSlot={activeSlot}
+              onSlotClick={handleSlotClick}
+            />
+
+            <div className="flex flex-col items-center gap-3">
+              <Numpad onPress={handleNumpadPress} disabled={completeModalOpen || levelUpOpen || parentalOpen} />
+              {mode === 'fim' && (
+                <VerificarButton
+                  onClick={handleVerificar}
+                  visible={allSlotsFilled() && !completeModalOpen}
+                />
+              )}
+              <FeedbackHint hint={hint} />
+            </div>
+          </div>
+
+          <ExerciseCompleteModal open={completeModalOpen} firstTry={!exerciseDirty} pointsEarned={pointsBurst} onNext={handleNext} />
+          <LevelUpModal open={levelUpOpen} nextLevel={level + 1} onAccept={handleAcceptLevelUp} onDecline={handleDeclineLevelUp} />
+          <ParentalPanel open={parentalOpen} level={level} onSetLevel={handleSetLevel} onReset={handleResetProgress} onClose={() => setParentalOpen(false)} />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+  <!-- Registo do Service Worker para funcionar offline em tablet.
+       Browsers exigem contexto seguro: http://localhost, http://127.0.0.1
+       ou HTTPS. LAN HTTP simples (ex.: http://192.168.x.x) NÃO conta
+       como secure — usar tools/serve_https.py no PC para servir via
+       HTTPS para o tablet (ver README, secção "Instalar no tablet"). -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => console.log('[SW] registado, scope:', reg.scope))
+          .catch(err => console.warn('[SW] falhou:', err));
+      });
+    }
+  </script>
+</body>
+</html>

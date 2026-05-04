@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerar ícones PWA — Contas Em Pé</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; max-width: 800px; margin: 0 auto; background: #fdf6e3; color: #2a3e5c; }
+    h1 { margin-top: 0; }
+    .row { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; margin: 24px 0; }
+    .preview { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    canvas { border: 2px solid #5c4a2a; border-radius: 8px; background: white; }
+    button { background: #7fb069; color: white; border: 2px solid #5c4a2a; padding: 8px 16px; font-size: 16px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+    button:hover { background: #6a9558; }
+    code { background: #fffef5; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+    ol li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>🦉 Gerar ícones PWA</h1>
+  <p>Esta página renderiza o ícone SVG (<code>icons/icon.svg</code>) em três tamanhos PNG necessários ao PWA. Corre uma vez, descarrega os 3 ficheiros, e mete-os em <code>icons/</code>.</p>
+
+  <ol>
+    <li>Verifica que os 3 previews abaixo mostram o mocho 🦉 sobre fundo bege.</li>
+    <li>Carrega em <strong>Descarregar todos</strong>.</li>
+    <li>Copia os ficheiros para a pasta <code>icons/</code> do projecto.</li>
+    <li>Faz <code>git add icons/*.png</code> e commit.</li>
+  </ol>
+
+  <div class="row" id="previews"></div>
+
+  <button id="downloadAll">Descarregar todos os 3 PNG</button>
+
+  <script>
+    const SVG_URL = '../icons/icon.svg';
+    const VARIANTS = [
+      { name: 'icon-192.png',          size: 192, maskable: false },
+      { name: 'icon-512.png',          size: 512, maskable: false },
+      { name: 'icon-maskable-512.png', size: 512, maskable: true  },
+    ];
+
+    async function loadSvgImage() {
+      const res = await fetch(SVG_URL);
+      const text = await res.text();
+      const blob = new Blob([text], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.src = url;
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+      return img;
+    }
+
+    function renderToCanvas(img, size, maskable) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Para "maskable", desenhar dentro de uma safe zone de 80% (Android adaptive
+      // icons recortam ~10% de cada lado), mantendo o resto preenchido com a cor
+      // de fundo do app.
+      if (maskable) {
+        ctx.fillStyle = '#fdf6e3';
+        ctx.fillRect(0, 0, size, size);
+        const inner = Math.round(size * 0.78);
+        const off = Math.round((size - inner) / 2);
+        ctx.drawImage(img, off, off, inner, inner);
+      } else {
+        ctx.drawImage(img, 0, 0, size, size);
+      }
+      return canvas;
+    }
+
+    function downloadCanvas(canvas, name) {
+      canvas.toBlob(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+      }, 'image/png');
+    }
+
+    async function init() {
+      const img = await loadSvgImage();
+      const previews = document.getElementById('previews');
+      const canvases = [];
+      VARIANTS.forEach(v => {
+        const wrap = document.createElement('div');
+        wrap.className = 'preview';
+        const canvas = renderToCanvas(img, v.size, v.maskable);
+        canvas.style.width = '128px';
+        canvas.style.height = '128px';
+        const label = document.createElement('div');
+        label.textContent = v.name + (v.maskable ? ' (maskable)' : '');
+        const dl = document.createElement('button');
+        dl.textContent = 'Descarregar';
+        dl.onclick = () => downloadCanvas(canvas, v.name);
+        wrap.appendChild(canvas);
+        wrap.appendChild(label);
+        wrap.appendChild(dl);
+        previews.appendChild(wrap);
+        canvases.push({ canvas, name: v.name });
+      });
+
+      document.getElementById('downloadAll').onclick = () => {
+        canvases.forEach((c, i) => setTimeout(() => downloadCanvas(c.canvas, c.name), i * 200));
+      };
+    }
+
+    init().catch(e => {
+      document.body.insertAdjacentHTML('beforeend', `<p style="color:#c47474">Erro: ${e.message}. Estás a abrir esta página via http.server, não file://?</p>`);
+    });
+  </script>
+</body>
+</html>

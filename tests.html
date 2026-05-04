@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Contas Em Pé — Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; background: #fdf6e3; color: #2a3e5c; max-width: 900px; margin: 0 auto; }
+    h1 { margin-top: 0; }
+    .summary { font-size: 22px; padding: 12px 18px; border-radius: 8px; margin: 16px 0; font-weight: 600; }
+    .summary.ok { background: #c5e0aa; color: #2c5012; }
+    .summary.bad { background: #f5cccc; color: #6b2020; }
+    ul { list-style: none; padding-left: 0; }
+    li { padding: 6px 10px; border-radius: 6px; margin: 2px 0; font-family: ui-monospace, monospace; font-size: 14px; }
+    li.pass { background: #eaf5e1; color: #2c5012; }
+    li.fail { background: #fadcdc; color: #6b2020; }
+    .group { margin-top: 24px; font-weight: 700; padding: 4px 0; border-bottom: 2px solid #5c4a2a; }
+  </style>
+</head>
+<body>
+  <h1>Contas Em Pé — Suite de testes</h1>
+  <div id="summary"></div>
+  <ul id="results"></ul>
+
+  <script src="logic.js"></script>
+  <script>
+    (function () {
+      let passed = 0, failed = 0;
+      const results = [];
+      let currentGroup = null;
+
+      function group(name) { currentGroup = name; results.push({ group: name }); }
+
+      function test(name, fn) {
+        try {
+          fn();
+          passed++;
+          results.push({ name, ok: true });
+        } catch (e) {
+          failed++;
+          results.push({ name, ok: false, error: e.message + (e.stack ? '\n' + e.stack.split('\n').slice(0, 3).join('\n') : '') });
+        }
+      }
+
+      function assertEq(actual, expected, msg) {
+        const a = JSON.stringify(actual);
+        const e = JSON.stringify(expected);
+        if (a !== e) throw new Error(`${msg || 'expected equal'}\n  got:      ${a}\n  expected: ${e}`);
+      }
+      function assertTrue(v, msg) { if (!v) throw new Error(msg || 'expected true'); }
+      function assertFalse(v, msg) { if (v) throw new Error(msg || 'expected false'); }
+      function assertThrows(fn, msg) {
+        let threw = false;
+        try { fn(); } catch (e) { threw = true; }
+        if (!threw) throw new Error(msg || 'expected to throw');
+      }
+
+      // Expor para os blocos de teste mais abaixo
+      window.__t = { group, test, assertEq, assertTrue, assertFalse, assertThrows };
+
+      // Tests injectados aqui em cada task (entre BEGIN-TESTS e END-TESTS)
+      // BEGIN-TESTS
+      const L = window.ContasLogic;
+
+      group('LEVELS configuration');
+
+      test('LEVELS tem 12 níveis', () => {
+        assertEq(L.LEVELS.length, 12);
+      });
+
+      test('Nível 1 é 2 dígitos × 2 parcelas, modo col', () => {
+        assertEq(L.LEVELS[0], { n: 1, digits: 2, parcelas: 2, mode: 'col' });
+      });
+
+      test('Nível 12 é 4 dígitos × 4 parcelas, modo fim', () => {
+        assertEq(L.LEVELS[11], { n: 12, digits: 4, parcelas: 4, mode: 'fim' });
+      });
+
+      test('Níveis ímpares são modo "col", pares modo "fim"', () => {
+        L.LEVELS.forEach((lvl, i) => {
+          assertEq(lvl.mode, i % 2 === 0 ? 'col' : 'fim', `nível ${i + 1}`);
+        });
+      });
+
+      test('Magnitude segue 2,2,3,3,3,3,4,4,4,4,4,4', () => {
+        const digits = L.LEVELS.map(l => l.digits);
+        assertEq(digits, [2,2,3,3,3,3,4,4,4,4,4,4]);
+      });
+
+      test('Parcelas seguem 2,2,2,2,3,3,2,2,3,3,4,4', () => {
+        const parcs = L.LEVELS.map(l => l.parcelas);
+        assertEq(parcs, [2,2,2,2,3,3,2,2,3,3,4,4]);
+      });
+
+      group('numColumns helper');
+
+      test('numColumns(2) = 2', () => assertEq(L.numColumns(2), 2));
+      test('numColumns(3) = 3', () => assertEq(L.numColumns(3), 3));
+      test('numColumns(4) = 4', () => assertEq(L.numColumns(4), 4));
+
+      group('computeColumnSums');
+
+      test('24 + 15 = 39, sem transporte', () => {
+        // 24 + 15: u=4+5=9 (sem carry), d=2+1=3 (sem carry)
+        // results: [9, 3] (índice 0 = unidades), carries: [0, 0]
+        const r = L.computeColumnSums([24, 15]);
+        assertEq(r.results, [9, 3]);
+        assertEq(r.carries, [0, 0]);
+      });
+
+      test('38 + 27 = 65, com transporte das unidades', () => {
+        // u=8+7=15 → result 5, carry 1
+        // d=3+2+1=6 → result 6, carry 0
+        const r = L.computeColumnSums([38, 27]);
+        assertEq(r.results, [5, 6]);
+        assertEq(r.carries, [1, 0]);
+      });
+
+      test('99 + 1 = 100, dois transportes em cadeia', () => {
+        // u=9+1=10 → 0, carry 1
+        // d=9+0+1=10 → 0, carry 1
+        // c=0+0+1=1 → 1, carry 0
+        // results: [0, 0, 1] (3 colunas porque carry estende a magnitude)
+        const r = L.computeColumnSums([99, 1]);
+        assertEq(r.results, [0, 0, 1]);
+        assertEq(r.carries, [1, 1, 0]);
+      });
+
+      test('124 + 56 + 78 = 258', () => {
+        // u=4+6+8=18 → 8, carry 1
+        // d=2+5+7+1=15 → 5, carry 1
+        // c=1+0+0+1=2 → 2, carry 0
+        const r = L.computeColumnSums([124, 56, 78]);
+        assertEq(r.results, [8, 5, 2]);
+        assertEq(r.carries, [1, 1, 0]);
+      });
+
+      test('parcela única devolve os algarismos sem transporte', () => {
+        const r = L.computeColumnSums([235]);
+        assertEq(r.results, [5, 3, 2]);
+        assertEq(r.carries, [0, 0, 0]);
+      });
+
+      group('hasAtLeastOneCarry');
+
+      test('24 + 15 não tem transporte', () => {
+        assertFalse(L.hasAtLeastOneCarry([24, 15]));
+      });
+
+      test('38 + 27 tem transporte (das unidades)', () => {
+        assertTrue(L.hasAtLeastOneCarry([38, 27]));
+      });
+
+      test('99 + 1 tem transporte', () => {
+        assertTrue(L.hasAtLeastOneCarry([99, 1]));
+      });
+
+      test('100 + 200 NÃO tem transporte (anti-trivialidade detectável)', () => {
+        assertFalse(L.hasAtLeastOneCarry([100, 200]));
+      });
+
+      group('validateSlot');
+
+      test('input correcto devolve {ok: true}', () => {
+        assertEq(L.validateSlot(5, 5), { ok: true });
+      });
+
+      test('input errado devolve {ok: false, expected}', () => {
+        assertEq(L.validateSlot(3, 5), { ok: false, expected: 5 });
+      });
+
+      test('input null/undefined trata como erro', () => {
+        assertEq(L.validateSlot(null, 5).ok, false);
+        assertEq(L.validateSlot(undefined, 5).ok, false);
+      });
+
+      test('aceita apenas algarismos 0-9 (números >9 dão erro)', () => {
+        // Sanity check — slots só aceitam 1 algarismo
+        assertEq(L.validateSlot(15, 5).ok, false);
+      });
+
+      group('generateExercise');
+
+      test('Nível 1 (2d × 2p, col): gera 2 números de 2 dígitos com transporte', () => {
+        for (let i = 0; i < 20; i++) {
+          const ex = L.generateExercise(L.LEVELS[0]);
+          assertEq(ex.parcelas.length, 2);
+          ex.parcelas.forEach(p => {
+            assertTrue(p >= 10 && p <= 99, `${p} fora de [10,99]`);
+          });
+          assertTrue(L.hasAtLeastOneCarry(ex.parcelas), `${ex.parcelas} devia ter transporte`);
+        }
+      });
+
+      test('Nível 5 (3d × 3p, col): pelo menos 1 número tem 3 dígitos', () => {
+        for (let i = 0; i < 20; i++) {
+          const ex = L.generateExercise(L.LEVELS[4]);
+          assertEq(ex.parcelas.length, 3);
+          const has3digits = ex.parcelas.some(p => p >= 100);
+          assertTrue(has3digits, `nenhuma parcela tem 3 dígitos: ${ex.parcelas}`);
+        }
+      });
+
+      test('Nível 7 (4d × 2p): gera com milhares', () => {
+        for (let i = 0; i < 10; i++) {
+          const ex = L.generateExercise(L.LEVELS[6]);
+          const has4digits = ex.parcelas.some(p => p >= 1000);
+          assertTrue(has4digits, `nenhuma parcela tem 4 dígitos: ${ex.parcelas}`);
+        }
+      });
+
+      test('Modo "col" tem no máximo 2 transportes (todos os níveis col)', () => {
+        L.LEVELS.filter(l => l.mode === 'col').forEach(lvl => {
+          for (let i = 0; i < 50; i++) {
+            const ex = L.generateExercise(lvl);
+            const cc = L.computeColumnSums(ex.parcelas).carries.filter(c => c > 0).length;
+            assertTrue(cc >= 1 && cc <= 2, `Nível ${lvl.n}: ${ex.parcelas} → ${cc} transportes`);
+          }
+        });
+      });
+
+      test('Modo "fim" pode ter mais transportes', () => {
+        for (let i = 0; i < 10; i++) {
+          const ex = L.generateExercise(L.LEVELS[1]);
+          assertEq(ex.parcelas.length, 2);
+          assertTrue(L.hasAtLeastOneCarry(ex.parcelas));
+        }
+      });
+
+      test('Devolve também o expected (computeColumnSums)', () => {
+        const ex = L.generateExercise(L.LEVELS[0]);
+        assertTrue(ex.expected !== undefined);
+        assertTrue(Array.isArray(ex.expected.results));
+        assertTrue(Array.isArray(ex.expected.carries));
+      });
+
+      group('anti-repetição (cache)');
+
+      test('generateExercise não repete 2x consecutivos', () => {
+        const seen = new Set();
+        for (let i = 0; i < 5; i++) {
+          const ex = L.generateExercise(L.LEVELS[0]);
+          const key = ex.parcelas.join(',');
+          assertFalse(seen.has(key), `repetiu ${key}`);
+          seen.add(key);
+          if (seen.size > 3) {
+            // remove o mais antigo (cache size = 3)
+            const first = seen.values().next().value;
+            seen.delete(first);
+          }
+        }
+      });
+
+      test('clearExerciseCache permite repetir', () => {
+        const ex1 = L.generateExercise(L.LEVELS[0]);
+        L.clearExerciseCache();
+        // Não dá para garantir repetição (random) mas a cache foi limpa, pelo menos não deve crashar
+        const ex2 = L.generateExercise(L.LEVELS[0]);
+        assertTrue(Array.isArray(ex2.parcelas));
+      });
+
+      group('persistência localStorage');
+
+      test('saveState escreve no localStorage', () => {
+        L.saveState({ level: 3, streak: 2, totalAttempts: 10, totalCorrectFirstTry: 7 });
+        const raw = localStorage.getItem('contas_em_pe');
+        assertTrue(raw !== null);
+        const parsed = JSON.parse(raw);
+        assertEq(parsed.level, 3);
+        assertEq(parsed.streak, 2);
+        assertEq(parsed.version, L.SCHEMA_VERSION);
+        assertTrue(typeof parsed.lastPlayed === 'string');
+      });
+
+      test('loadState lê do localStorage', () => {
+        L.saveState({ level: 5, streak: 3, totalAttempts: 20, totalCorrectFirstTry: 14 });
+        const s = L.loadState();
+        assertEq(s.level, 5);
+        assertEq(s.streak, 3);
+      });
+
+      test('loadState devolve estado default quando não há nada guardado', () => {
+        localStorage.removeItem('contas_em_pe');
+        const s = L.loadState();
+        assertEq(s.level, 1);
+        assertEq(s.streak, 0);
+        assertEq(s.totalAttempts, 0);
+        assertEq(s.totalCorrectFirstTry, 0);
+      });
+
+      test('loadState ignora dados corrompidos e devolve default', () => {
+        localStorage.setItem('contas_em_pe', 'isto não é json válido');
+        const s = L.loadState();
+        assertEq(s.level, 1);
+      });
+
+      test('resetState limpa o localStorage', () => {
+        L.saveState({ level: 7, streak: 1, totalAttempts: 30, totalCorrectFirstTry: 20 });
+        L.resetState();
+        const raw = localStorage.getItem('contas_em_pe');
+        assertTrue(raw === null);
+      });
+
+      group('P1 audit — clamp de level em loadState');
+
+      function writeRawState(obj) {
+        localStorage.setItem('contas_em_pe', JSON.stringify(obj));
+      }
+
+      test('loadState clampa level acima de 12 para 12', () => {
+        writeRawState({ level: 50, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
+        assertEq(L.loadState().level, 12);
+      });
+
+      test('loadState clampa level <= 0 para 1', () => {
+        writeRawState({ level: 0, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
+        assertEq(L.loadState().level, 1);
+        writeRawState({ level: -5, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
+        assertEq(L.loadState().level, 1);
+      });
+
+      test('loadState rejeita NaN/Infinity em level (volta a 1)', () => {
+        writeRawState({ level: 'banana', streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
+        assertEq(L.loadState().level, 1);
+      });
+
+      test('loadState arredonda level fraccional para baixo', () => {
+        writeRawState({ level: 3.7, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
+        assertEq(L.loadState().level, 3);
+      });
+
+      group('P1 audit — heterogeneidade de magnitudes em generateExercise');
+
+      test('Nível 3 (3d × 2p) por vezes gera parcelas com <3 dígitos', () => {
+        L.clearExerciseCache();
+        let foundShort = false;
+        for (let i = 0; i < 200; i++) {
+          L.clearExerciseCache();
+          const ex = L.generateExercise(L.LEVELS[2]);
+          if (ex.parcelas.some(p => p < 100)) { foundShort = true; break; }
+        }
+        assertTrue(foundShort, 'Nível 3 nunca gerou parcela com <3 dígitos em 200 tentativas');
+      });
+
+      test('Nível 7 (4d × 2p) gera às vezes parcelas com <4 dígitos', () => {
+        L.clearExerciseCache();
+        let foundShort = false;
+        for (let i = 0; i < 200; i++) {
+          L.clearExerciseCache();
+          const ex = L.generateExercise(L.LEVELS[6]);
+          if (ex.parcelas.some(p => p < 1000)) { foundShort = true; break; }
+        }
+        assertTrue(foundShort, 'Nível 7 nunca gerou parcela com <4 dígitos em 200 tentativas');
+      });
+
+      test('Nível 7: pelo menos 1 parcela tem sempre 4 dígitos', () => {
+        L.clearExerciseCache();
+        for (let i = 0; i < 100; i++) {
+          L.clearExerciseCache();
+          const ex = L.generateExercise(L.LEVELS[6]);
+          assertTrue(ex.parcelas.some(p => p >= 1000), `Nível 7: ${ex.parcelas} sem nenhuma parcela 4d`);
+        }
+      });
+
+      test('Nível 1 (2d): mantém todas as parcelas com 2 dígitos', () => {
+        L.clearExerciseCache();
+        for (let i = 0; i < 100; i++) {
+          L.clearExerciseCache();
+          const ex = L.generateExercise(L.LEVELS[0]);
+          ex.parcelas.forEach(p => assertTrue(p >= 10 && p <= 99, `Nível 1: ${p} fora de [10,99]`));
+        }
+      });
+
+      group('P1 audit — fallback aleatório (sem padrão dominante)');
+
+      test('Nível 11: nenhum padrão domina em 500 gerações (~2% antes)', () => {
+        L.clearExerciseCache();
+        const counts = {};
+        for (let i = 0; i < 500; i++) {
+          L.clearExerciseCache();
+          const ex = L.generateExercise(L.LEVELS[10]);
+          const key = ex.parcelas.slice().sort((a, b) => a - b).join(',');
+          counts[key] = (counts[key] || 0) + 1;
+        }
+        const max = Math.max(...Object.values(counts));
+        assertTrue(max < 25, `Padrão dominante apareceu ${max}/500 vezes (>5%)`);
+      });
+
+      group('P2 audit — validação de input em computeColumnSums');
+
+      test('throw se parcelas tem float', () => {
+        assertThrows(() => L.computeColumnSums([1.5, 2]), 'float devia lançar');
+      });
+
+      test('throw se parcelas tem negativo', () => {
+        assertThrows(() => L.computeColumnSums([-5, 10]), 'negativo devia lançar');
+      });
+
+      test('throw se parcelas tem NaN', () => {
+        assertThrows(() => L.computeColumnSums([NaN, 5]), 'NaN devia lançar');
+      });
+
+      test('throw se parcelas tem string', () => {
+        assertThrows(() => L.computeColumnSums(['12', 5]), 'string devia lançar');
+      });
+
+      test('throw se parcelas não é array', () => {
+        assertThrows(() => L.computeColumnSums(undefined));
+        assertThrows(() => L.computeColumnSums('foo'));
+        assertThrows(() => L.computeColumnSums(123));
+      });
+
+      group('Sistema de pontos — computePointsForExercise');
+
+      test('Acerto à 1ª tentativa vale 10 pontos', () => {
+        assertEq(L.computePointsForExercise(true), 10);
+      });
+
+      test('Acerto após erros vale 5 pontos', () => {
+        assertEq(L.computePointsForExercise(false), 5);
+      });
+
+      test('Constantes expostas: POINTS_FIRST_TRY=10, POINTS_RETRY=5', () => {
+        assertEq(L.POINTS_FIRST_TRY, 10);
+        assertEq(L.POINTS_RETRY, 5);
+      });
+
+      group('Sistema de pontos — defaultState e persistência');
+
+      test('defaultState inclui points: 0', () => {
+        L.resetState();
+        const s = L.loadState();
+        assertEq(s.points, 0);
+      });
+
+      test('saveState persiste points', () => {
+        L.resetState();
+        L.saveState({ level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, points: 75 });
+        assertEq(L.loadState().points, 75);
+      });
+
+      test('SCHEMA_VERSION é 2', () => {
+        assertEq(L.SCHEMA_VERSION, 2);
+      });
+
+      test('saveState escreve com version 2', () => {
+        L.resetState();
+        L.saveState({ level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, points: 0 });
+        const raw = JSON.parse(localStorage.getItem('contas_em_pe'));
+        assertEq(raw.version, 2);
+      });
+
+      group('Sistema de pontos — migração schema v1 → v2');
+
+      test('Estado v1 com totalCorrectFirstTry=8 migra para points=80', () => {
+        localStorage.setItem('contas_em_pe', JSON.stringify({
+          level: 3, streak: 1, totalAttempts: 12, totalCorrectFirstTry: 8,
+          lastPlayed: '2026-01-01', version: 1,
+        }));
+        const s = L.loadState();
+        // Migração heurística: pontos retroactivos = totalCorrectFirstTry * 10
+        assertEq(s.points, 80);
+        // Mantém os outros campos
+        assertEq(s.level, 3);
+        assertEq(s.streak, 1);
+        assertEq(s.totalCorrectFirstTry, 8);
+      });
+
+      test('Estado v1 limpo (sem progresso) migra para points=0', () => {
+        localStorage.setItem('contas_em_pe', JSON.stringify({
+          level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0,
+          lastPlayed: '2026-01-01', version: 1,
+        }));
+        assertEq(L.loadState().points, 0);
+      });
+
+      test('Schema desconhecido (>2) cai para defaultState', () => {
+        localStorage.setItem('contas_em_pe', JSON.stringify({ version: 99, points: 9999 }));
+        const s = L.loadState();
+        assertEq(s.level, 1);
+        assertEq(s.points, 0);
+      });
+      // END-TESTS
+
+      // Renderização
+      const summary = document.getElementById('summary');
+      summary.className = 'summary ' + (failed === 0 ? 'ok' : 'bad');
+      summary.textContent = `${passed} passed · ${failed} failed`;
+
+      const list = document.getElementById('results');
+      results.forEach(r => {
+        if (r.group !== undefined) {
+          const h = document.createElement('div');
+          h.className = 'group';
+          h.textContent = r.group;
+          list.appendChild(h);
+          return;
+        }
+        const li = document.createElement('li');
+        li.className = r.ok ? 'pass' : 'fail';
+        li.innerHTML = r.ok ? `✓ ${r.name}` : `✗ ${r.name}<br><small>${r.error.replace(/\n/g, '<br>')}</small>`;
+        list.appendChild(li);
+      });
+    })();
+  </script>
+</body>
+</html>

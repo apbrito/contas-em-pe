@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Contas Em Pé — coruja sábia">
+  <!-- Fundo cor de papel (paper-bg) com cantos arredondados manuscritos -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="#fdf6e3"/>
+  <!-- Pequena moldura subtil -->
+  <rect x="12" y="12" width="488" height="488" rx="84" ry="84" fill="none" stroke="#5c4a2a" stroke-width="3" opacity="0.18"/>
+  <!-- Mocho (emoji renderizado pelo OS — Noto no Android, Segoe UI no Windows) -->
+  <text x="256" y="328" font-size="340" text-anchor="middle" dominant-baseline="alphabetic" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🦉</text>
+</svg>
