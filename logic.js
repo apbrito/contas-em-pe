@@ -4,7 +4,7 @@
 (function (global) {
   'use strict';
 
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.1.1';
   const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1h
 
   const LEVELS = [

@@ -11,7 +11,7 @@
 // pode ter de reabrir a app uma vez online para o novo
 // SW activar.
 
-const CACHE_VERSION = 'contas-em-pe-v20260508-1452';
+const CACHE_VERSION = 'contas-em-pe-v20260508-1531';
 
 // Required: app não corre sem isto.
 const LOCAL_REQUIRED = [
@@ -35,7 +35,7 @@ const CDN_ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js',
   'https://unpkg.com/@babel/standalone/babel.min.js',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap',
 ];
 
 self.addEventListener('install', (event) => {

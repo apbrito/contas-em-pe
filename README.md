@@ -43,7 +43,7 @@ usar com os seus.
 - **Modo Contra-relógio**: 10 minutos para fazer o máximo de pontos.
   Os exercícios sobem de dificuldade automaticamente. Vários
   jogadores no mesmo tablet — cada um com o seu cartão (nome +
-  animal). Os melhores pontuações ficam no **Mural dos Campeões**.
+  animal). As melhores pontuações ficam no **Mural dos Campeões**.
 
 ## Privacidade — dados ficam no tablet
 
@@ -84,7 +84,7 @@ Histórico de versões: ver [CHANGELOG.md](CHANGELOG.md).
 (1-12 letras). Nada mais durante o jogo.
 
 **Há som?** Não na versão actual. Está planeado para uma próxima
-(opcional, com toggle no painel parental).
+versão (opcional, com toggle no painel parental).
 
 **Pode jogar sem internet?** Sim, depois da primeira abertura.
 

@@ -4,6 +4,18 @@ Todas as alterações visíveis ao utilizador da app.
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/),
 versionamento semântico ([SemVer](https://semver.org/)).
 
+## [1.1.1] — 2026-05-08
+
+### Melhorias
+- Tipografia e larguras adaptam-se melhor ao ecrã do PC
+  (mantém a boa leitura no tablet).
+
+### Correcções
+- Pequenas correcções de texto no README (concordância e clareza).
+- Service worker pré-cacheia a fonte com peso 600 desde o
+  primeiro install (antes só guardava 400 e 700, e o peso 600 só
+  ficava em cache quando a página era aberta online).
+
 ## [1.1.0] — 2026-05-08
 
 ### Novidades
