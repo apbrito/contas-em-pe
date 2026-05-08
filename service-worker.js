@@ -11,7 +11,7 @@
 // pode ter de reabrir a app uma vez online para o novo
 // SW activar.
 
-const CACHE_VERSION = 'contas-em-pe-v20260508-1349';
+const CACHE_VERSION = 'contas-em-pe-v20260508-1452';
 
 // Required: app não corre sem isto.
 const LOCAL_REQUIRED = [

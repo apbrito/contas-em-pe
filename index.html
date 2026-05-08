@@ -25,7 +25,7 @@
   <!-- Fonte manuscrita -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Lógica pura -->
   <script src="logic.js"></script>
@@ -286,121 +286,139 @@
 
     .pc-shell {
       background: var(--paper-bg-warm);
-      padding: 24px 28px;
+      padding: clamp(20px, 2.4vw, 36px) clamp(24px, 2.8vw, 44px);
       border-radius: 14px;
-      max-width: 720px;
+      max-width: min(880px, 92vw);
       margin: 0 auto;
       box-shadow: 0 4px 18px rgba(0,0,0,0.08);
       position: relative;
     }
-    .pc-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-top: 16px; }
-    .pc-form { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: 16px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
-    .pc-label { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); margin-bottom: 4px; }
-    .pc-help { font-size: 11px; color: #888; margin-bottom: 6px; }
+    .pc-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(14px, 1.8vw, 26px); margin-top: clamp(14px, 1.8vw, 24px); }
+    @media (max-width: 600px) { .pc-grid { grid-template-columns: 1fr; } }
+    .pc-form { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: clamp(14px, 1.8vw, 24px); box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .pc-label { font-family: 'Caveat', cursive; font-size: clamp(20px, 2.2vw, 30px); font-weight: 600; color: var(--ink-warm); margin-bottom: 4px; }
+    .pc-help { font-size: clamp(11px, 1.2vw, 16px); color: #888; margin-bottom: 6px; }
     .pc-help.error { color: #b00020; }
-    .pc-input { background: transparent; border: none; border-bottom: 2px dashed var(--bronze); font-family: 'Caveat', cursive; font-size: 28px; color: var(--ink-warm); width: 100%; padding: 4px 0; outline: none; }
-    .pc-ava-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
-    .pc-ava { background: var(--paper-bg-warm); border: 2px solid transparent; border-radius: 12px; padding: 8px; text-align: center; font-size: 28px; cursor: pointer; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; min-height: 56px; }
+    .pc-input { background: transparent; border: none; border-bottom: 2px dashed var(--bronze); font-family: 'Caveat', cursive; font-size: clamp(28px, 3vw, 42px); color: var(--ink-warm); width: 100%; padding: 4px 0; outline: none; }
+    .pc-ava-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(6px, 0.8vw, 12px); margin-top: clamp(10px, 1.2vw, 16px); }
+    .pc-ava { background: var(--paper-bg-warm); border: 2px solid transparent; border-radius: 12px; padding: 8px; text-align: center; font-size: clamp(28px, 3vw, 44px); cursor: pointer; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; min-height: 56px; }
     .pc-ava.selected { border-color: var(--burgundy); background: #fff5ec; box-shadow: 0 0 0 3px rgba(128,0,32,0.10); transform: scale(1.05); }
-    .pc-preview-sign { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.06) 6px 7px), var(--paper-cream); border: 3px solid var(--bronze); border-radius: 14px; padding: 18px 14px; text-align: center; box-shadow: 4px 6px 0 rgba(0,0,0,0.12); transform: rotate(-2deg); margin: 14px; }
-    .pc-preview-ava { font-size: 56px; }
-    .pc-preview-name { font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink-warm); margin-top: 4px; }
-    .pc-preview-badge { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 14px; padding: 1px 10px; border-radius: 6px; margin-top: 6px; }
-    .pc-btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
-    .pc-btn { font-family: 'Caveat', cursive; font-size: 18px; background: var(--burgundy); color: var(--paper-cream); border: 2px solid var(--burgundy); padding: 12px 22px; border-radius: 10px; box-shadow: 2px 3px 0 rgba(128,0,32,0.18); cursor: pointer; min-height: 56px; }
+    .pc-preview-sign { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.06) 6px 7px), var(--paper-cream); border: 3px solid var(--bronze); border-radius: 14px; padding: clamp(18px, 2.2vw, 28px) clamp(14px, 1.8vw, 24px); text-align: center; box-shadow: 4px 6px 0 rgba(0,0,0,0.12); transform: rotate(-2deg); margin: 14px; }
+    .pc-preview-ava { font-size: clamp(56px, 6vw, 96px); line-height: 1; }
+    .pc-preview-name { font-family: 'Caveat', cursive; font-size: clamp(26px, 2.8vw, 40px); font-weight: 600; color: var(--ink-warm); margin-top: 4px; }
+    .pc-preview-badge { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: clamp(14px, 1.5vw, 20px); padding: 1px 10px; border-radius: 6px; margin-top: 6px; }
+    .pc-btn-row { display: flex; gap: clamp(10px, 1.2vw, 16px); justify-content: center; margin-top: clamp(14px, 1.8vw, 22px); }
+    .pc-btn { font-family: 'Caveat', cursive; font-size: clamp(18px, 1.9vw, 26px); font-weight: 600; background: var(--burgundy); color: var(--paper-cream); border: 2px solid var(--burgundy); padding: clamp(12px, 1.4vw, 18px) clamp(22px, 2.4vw, 32px); border-radius: 10px; box-shadow: 2px 3px 0 rgba(128,0,32,0.18); cursor: pointer; min-height: 56px; }
     .pc-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .pc-btn.ghost { background: var(--paper-cream); color: var(--ink-warm); border-color: var(--bronze); box-shadow: 2px 3px 0 rgba(184,134,11,0.18); }
 
     .mm-shell {
       background: radial-gradient(ellipse at 80% 18%, rgba(255,222,160,0.45) 0%, transparent 60%), radial-gradient(ellipse at 12% 82%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm);
-      padding: 24px 28px; border-radius: 14px;
-      max-width: 720px; margin: 0 auto;
+      padding: clamp(20px, 2.4vw, 36px) clamp(24px, 2.8vw, 44px); border-radius: 14px;
+      max-width: min(880px, 92vw); margin: 0 auto;
       box-shadow: 0 4px 18px rgba(0,0,0,0.08); position: relative;
     }
-    .mm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-    .mm-greet { font-family: 'Caveat', cursive; font-size: 28px; color: var(--ink-warm); line-height: 1; }
-    .mm-greet .small { font-size: 13px; color: var(--burgundy); display: block; margin-top: 2px; }
+    .mm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: clamp(16px, 2vw, 28px); gap: clamp(12px, 1.5vw, 20px); }
+    .mm-greet { font-family: 'Caveat', cursive; font-size: clamp(28px, 3.6vw, 48px); font-weight: 600; color: var(--ink-warm); line-height: 1; }
+    .mm-greet .small { font-size: clamp(13px, 1.5vw, 20px); font-weight: 400; color: var(--burgundy); display: block; margin-top: 2px; }
     .mm-greet a { color: var(--gold-bright); cursor: pointer; text-decoration: underline; margin-left: 4px; }
-    .mm-points { font-family: 'Caveat', cursive; font-size: 22px; color: var(--gold-bright); }
-    .mm-card { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 14px; padding: 14px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
-    .mm-card-title { font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink-warm); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; }
-    .mm-card-modes { display: flex; gap: 10px; }
-    .mm-mode { flex: 1; background: var(--paper-bg-warm); border: 2px solid var(--gold-bright); border-radius: 10px; padding: 14px 12px; text-align: center; cursor: pointer; min-height: 56px; }
+    .mm-points { font-family: 'Caveat', cursive; font-size: clamp(22px, 2.4vw, 34px); font-weight: 600; color: var(--gold-bright); white-space: nowrap; }
+    .mm-card { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 14px; padding: clamp(14px, 1.6vw, 22px); box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .mm-card-title { font-family: 'Caveat', cursive; font-size: clamp(26px, 2.8vw, 42px); font-weight: 600; color: var(--ink-warm); margin-bottom: clamp(10px, 1.2vw, 16px); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .mm-card-title .level { font-family: 'Caveat', cursive; font-weight: 400; font-size: clamp(14px, 1.5vw, 20px); color: #888; }
+    .mm-card-modes { display: flex; gap: clamp(10px, 1.2vw, 16px); }
+    .mm-mode { flex: 1; background: var(--paper-bg-warm); border: 2px solid var(--gold-bright); border-radius: 10px; padding: clamp(14px, 2vw, 24px) clamp(12px, 1.6vw, 20px); text-align: center; cursor: pointer; min-height: 56px; }
     .mm-mode.tempo { border-color: var(--burgundy); }
-    .mm-mode .ico { font-size: 28px; }
-    .mm-mode .lbl { font-family: 'Caveat', cursive; font-size: 18px; color: var(--ink-warm); }
-    .mm-mode .meta { font-size: 11px; color: #888; }
-    .mm-ghost-btn { background: transparent; border: 1.5px solid var(--bronze); color: var(--ink-warm); padding: 10px 18px; border-radius: 8px; font-family: 'Caveat', cursive; font-size: 16px; cursor: pointer; margin: 12px auto 0; display: block; min-height: 48px; }
-    .mm-gear { background: transparent; border: none; cursor: pointer; font-size: 22px; padding: 4px 8px; min-height: 44px; }
-    .ta-shell { max-width: 900px; margin: 0 auto; padding: 16px; }
-    .ta-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
-    .ta-header .left { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
-    .ta-name { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); }
-    .ta-level { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); }
-    .ta-points { font-family: 'Caveat', cursive; font-size: 22px; color: var(--gold-bright); }
-    .ta-time { font-family: 'Caveat', cursive; font-size: 36px; color: var(--burgundy); line-height: 1; min-width: 100px; text-align: right; }
+    .mm-mode .ico { font-size: clamp(32px, 3.6vw, 56px); line-height: 1; }
+    .mm-mode .lbl { font-family: 'Caveat', cursive; font-size: clamp(20px, 2.2vw, 32px); font-weight: 600; color: var(--ink-warm); margin-top: 4px; }
+    .mm-mode .meta { font-size: clamp(12px, 1.4vw, 18px); color: #888; margin-top: 2px; }
+    .mm-ghost-btn { background: transparent; border: 1.5px solid var(--bronze); color: var(--ink-warm); padding: clamp(10px, 1.2vw, 16px) clamp(18px, 2vw, 28px); border-radius: 8px; font-family: 'Caveat', cursive; font-size: clamp(18px, 1.9vw, 26px); font-weight: 600; cursor: pointer; margin: clamp(12px, 1.6vw, 20px) auto 0; display: block; min-height: 48px; }
+    .mm-gear { background: transparent; border: none; cursor: pointer; font-size: clamp(24px, 2.4vw, 34px); padding: clamp(4px, 0.6vw, 8px) clamp(8px, 0.9vw, 12px); min-height: 44px; }
+    .ta-shell { max-width: min(1080px, 96vw); margin: 0 auto; padding: clamp(12px, 1.6vw, 22px); }
+    .ta-header { display: flex; justify-content: space-between; align-items: center; padding: clamp(8px, 1vw, 14px) clamp(14px, 1.6vw, 22px); background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; margin-bottom: clamp(12px, 1.4vw, 20px); gap: clamp(12px, 1.4vw, 20px); flex-wrap: wrap; }
+    .ta-header .left { display: flex; gap: clamp(12px, 1.4vw, 22px); align-items: baseline; flex-wrap: wrap; }
+    .ta-name { font-family: 'Caveat', cursive; font-size: clamp(20px, 2.2vw, 30px); font-weight: 600; color: var(--ink-warm); }
+    .ta-level { font-family: 'Caveat', cursive; font-size: clamp(18px, 2vw, 26px); color: var(--burgundy); }
+    .ta-points { font-family: 'Caveat', cursive; font-size: clamp(22px, 2.4vw, 34px); font-weight: 600; color: var(--gold-bright); }
+    .ta-time { font-family: 'Caveat', cursive; font-size: clamp(36px, 4.5vw, 64px); font-weight: 700; color: var(--burgundy); line-height: 1; min-width: clamp(100px, 10vw, 150px); text-align: right; }
     .ta-time.warn { color: #c84020; }
     .ta-time.crit { color: #b00020; animation: pulse-soft 1s infinite; }
+    /* TimeAttackLobby cards */
+    .ta-lobby-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 16vw, 200px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+    .ta-lobby-card { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.05) 6px 7px), var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: clamp(10px, 1.2vw, 16px) clamp(6px, 0.8vw, 12px); text-align: center; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); cursor: pointer; min-height: clamp(110px, 12vw, 150px); }
+    .ta-lobby-card.alt { transform: rotate(1deg); }
+    .ta-lobby-card:not(.alt) { transform: rotate(-1deg); }
+    .ta-lobby-avatar { font-size: clamp(32px, 3.6vw, 54px); line-height: 1; }
+    .ta-lobby-name { font-family: 'Caveat', cursive; font-size: clamp(20px, 2.2vw, 30px); font-weight: 600; color: var(--ink-warm); margin-top: 2px; }
+    .ta-lobby-best { font-size: clamp(11px, 1.2vw, 16px); color: var(--burgundy); margin-top: 2px; }
+    .ta-lobby-new { background: transparent; border: 2px dashed var(--bronze); border-radius: 12px; padding: clamp(10px, 1.2vw, 16px) clamp(6px, 0.8vw, 12px); text-align: center; color: var(--bronze); cursor: pointer; font-family: 'Caveat', cursive; min-height: clamp(110px, 12vw, 150px); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ta-lobby-new .plus { font-size: clamp(32px, 3.6vw, 54px); line-height: 1; }
+    .ta-lobby-new .lbl { font-size: clamp(18px, 2vw, 26px); font-weight: 600; }
+    .ta-lobby-actions { display: flex; gap: clamp(10px, 1.2vw, 16px); justify-content: center; margin-top: clamp(18px, 2vw, 28px); flex-wrap: wrap; }
+    .ta-lobby-btn { background: transparent; border: 1.5px solid var(--bronze); border-radius: 10px; padding: clamp(12px, 1.4vw, 18px) clamp(18px, 2vw, 28px); font-family: 'Caveat', cursive; font-size: clamp(18px, 1.9vw, 26px); font-weight: 600; cursor: pointer; color: var(--ink-warm); min-height: 56px; }
+    .ta-lobby-btn.mural { background: var(--paper-cream); border: 2px solid var(--burgundy); color: var(--burgundy); box-shadow: 2px 3px 0 rgba(128,0,32,0.18); }
 
     /* EndScreen */
-    .es-shell { max-width: 920px; margin: 0 auto; padding: 24px 26px 20px; background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.30) 0%, transparent 60%), radial-gradient(ellipse at 30% 95%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
-    .es-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; align-items: center; }
+    .es-shell { max-width: min(1080px, 96vw); margin: 0 auto; padding: clamp(20px, 2.4vw, 36px) clamp(22px, 2.6vw, 40px) clamp(18px, 2vw, 30px); background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.30) 0%, transparent 60%), radial-gradient(ellipse at 30% 95%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
+    .es-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(14px, 1.8vw, 26px); align-items: center; }
     @media (max-width: 700px) { .es-grid { grid-template-columns: 1fr; } }
     .es-left { text-align: center; }
-    .es-pts-big { font-family: 'Caveat', cursive; font-size: 110px; color: var(--burgundy); line-height: 0.95; letter-spacing: -2px; }
-    .es-pts-big .star { color: var(--gold-bright); font-size: 70px; vertical-align: super; }
-    .es-place-big { font-family: 'Caveat', cursive; font-size: 36px; color: var(--ink-warm); margin-top: 2px; }
-    .es-msg-big { font-family: 'Caveat', cursive; font-size: 24px; color: var(--ink-warm); background: var(--paper-cream); border: 2px dashed var(--bronze); border-radius: 14px; padding: 10px 16px; margin: 10px auto 0; line-height: 1.2; transform: rotate(-1deg); box-shadow: 2px 3px 0 rgba(184,134,11,0.18); display: inline-block; max-width: 90%; }
-    .es-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
-    .es-stat { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: 6px 4px; text-align: center; }
-    .es-stat .v { font-family: 'Caveat', cursive; font-size: 22px; color: var(--burgundy); line-height: 1; }
-    .es-stat .l { font-size: 10px; color: var(--ink-warm); }
-    .es-mini-podium { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: 10px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
-    .es-mini-title { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); text-align: center; line-height: 1; margin-bottom: 6px; }
-    .es-mini-row { display: grid; grid-template-columns: 22px 22px 1fr auto; gap: 6px; align-items: center; padding: 3px 6px; border-radius: 6px; font-size: 12px; color: var(--ink-warm); }
+    .es-pts-big { font-family: 'Caveat', cursive; font-size: clamp(96px, 11vw, 160px); font-weight: 700; color: var(--burgundy); line-height: 0.95; letter-spacing: -2px; }
+    .es-pts-big .star { color: var(--gold-bright); font-size: clamp(60px, 7vw, 100px); vertical-align: super; }
+    .es-place-big { font-family: 'Caveat', cursive; font-size: clamp(32px, 3.6vw, 52px); font-weight: 600; color: var(--ink-warm); margin-top: 2px; }
+    .es-msg-big { font-family: 'Caveat', cursive; font-size: clamp(22px, 2.4vw, 32px); font-weight: 600; color: var(--ink-warm); background: var(--paper-cream); border: 2px dashed var(--bronze); border-radius: 14px; padding: clamp(10px, 1.2vw, 16px) clamp(16px, 1.8vw, 24px); margin: clamp(10px, 1.2vw, 16px) auto 0; line-height: 1.2; transform: rotate(-1deg); box-shadow: 2px 3px 0 rgba(184,134,11,0.18); display: inline-block; max-width: 90%; }
+    .es-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(8px, 1vw, 14px); margin-top: clamp(14px, 1.6vw, 22px); }
+    .es-stat { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: clamp(6px, 0.8vw, 10px) clamp(4px, 0.6vw, 8px); text-align: center; }
+    .es-stat .v { font-family: 'Caveat', cursive; font-size: clamp(22px, 2.4vw, 32px); font-weight: 600; color: var(--burgundy); line-height: 1; }
+    .es-stat .l { font-size: clamp(10px, 1.1vw, 14px); color: var(--ink-warm); }
+    .es-mini-podium { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: clamp(10px, 1.2vw, 16px); box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .es-mini-title { font-family: 'Caveat', cursive; font-size: clamp(18px, 2vw, 26px); font-weight: 600; color: var(--burgundy); text-align: center; line-height: 1; margin-bottom: 6px; }
+    .es-mini-row { display: grid; grid-template-columns: clamp(22px, 2.2vw, 30px) clamp(22px, 2.2vw, 30px) 1fr auto; gap: clamp(6px, 0.8vw, 10px); align-items: center; padding: clamp(3px, 0.5vw, 6px) clamp(6px, 0.8vw, 10px); border-radius: 6px; font-size: clamp(12px, 1.4vw, 18px); color: var(--ink-warm); }
     .es-mini-row.me { background: rgba(212,160,23,0.18); }
-    .es-mini-row .pos { font-family: 'Caveat', cursive; font-size: 16px; color: var(--burgundy); }
-    .es-mini-row .nm { font-family: 'Caveat', cursive; font-size: 16px; }
-    .es-mini-row .pts { font-family: 'Caveat', cursive; font-size: 16px; color: var(--gold-bright); }
+    .es-mini-row .pos { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); font-weight: 600; color: var(--burgundy); }
+    .es-mini-row .nm { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); }
+    .es-mini-row .pts { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); font-weight: 600; color: var(--gold-bright); }
+    .es-mini-row .ava-emoji { font-size: clamp(18px, 2vw, 26px); text-align: center; }
+    .es-btn-mini { font-size: clamp(14px, 1.5vw, 20px) !important; padding: clamp(8px, 1vw, 12px) clamp(14px, 1.6vw, 22px) !important; min-height: 48px !important; }
     .es-confetti span {
       position: absolute; width: 8px; height: 10px;
       pointer-events: none;
       animation: confetti-fall 5s ease-in forwards;
     }
-    .es-btn { font-family: 'Caveat', cursive; font-size: 18px; padding: 12px 22px; border-radius: 10px; cursor: pointer; min-height: 56px; }
+    .es-btn { font-family: 'Caveat', cursive; font-size: clamp(18px, 1.9vw, 26px); font-weight: 600; padding: clamp(12px, 1.4vw, 18px) clamp(22px, 2.4vw, 32px); border-radius: 10px; cursor: pointer; min-height: 56px; }
     .es-btn.primary { background: var(--burgundy); color: var(--paper-cream); border: 2px solid var(--burgundy); box-shadow: 2px 3px 0 rgba(128,0,32,0.18); }
     .es-btn.ghost { background: transparent; color: var(--ink-warm); border: 1.5px solid var(--bronze); }
 
-    .lb-shell { max-width: 760px; margin: 0 auto; padding: 24px 28px 18px; background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.18) 0%, transparent 60%), radial-gradient(ellipse at 12% 82%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
-    .lb-title { font-family: 'Caveat', cursive; font-size: 38px; color: var(--burgundy); line-height: 1; text-shadow: 2px 2px 0 rgba(212,160,23,0.35); text-align: center; }
-    .lb-sub { font-family: 'Caveat', cursive; font-size: 16px; color: var(--ink-warm); text-align: center; margin-top: 2px; }
-    .lb-ribbon { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 13px; padding: 1px 14px; border-radius: 4px; position: relative; margin-top: 6px; }
+    .lb-shell { max-width: min(920px, 94vw); margin: 0 auto; padding: clamp(20px, 2.4vw, 36px) clamp(24px, 2.8vw, 44px) clamp(16px, 2vw, 26px); background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.18) 0%, transparent 60%), radial-gradient(ellipse at 12% 82%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
+    .lb-title { font-family: 'Caveat', cursive; font-size: clamp(38px, 4.2vw, 60px); font-weight: 700; color: var(--burgundy); line-height: 1; text-shadow: 2px 2px 0 rgba(212,160,23,0.35); text-align: center; }
+    .lb-sub { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); color: var(--ink-warm); text-align: center; margin-top: 2px; }
+    .lb-ribbon { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: clamp(13px, 1.4vw, 18px); font-weight: 600; padding: 1px 14px; border-radius: 4px; position: relative; margin-top: 6px; }
     .lb-ribbon::before, .lb-ribbon::after { content: ""; position: absolute; top: 0; bottom: 0; width: 8px; background: var(--gold-bright); }
     .lb-ribbon::before { left: -7px; clip-path: polygon(100% 0, 100% 100%, 0 50%); }
     .lb-ribbon::after { right: -7px; clip-path: polygon(0 0, 0 100%, 100% 50%); }
-    .lb-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; align-items: end; margin: 12px 0; padding: 0 8px; }
+    .lb-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: clamp(8px, 1vw, 14px); align-items: end; margin: clamp(12px, 1.4vw, 20px) 0; padding: 0 clamp(8px, 1vw, 14px); }
     .lb-step { text-align: center; position: relative; }
-    .lb-step .ava { font-size: 38px; line-height: 1; }
-    .lb-step .nm { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); }
-    .lb-step .pts { font-family: 'Caveat', cursive; font-size: 16px; color: var(--burgundy); }
-    .lb-step .base { margin-top: 4px; color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 30px; border-radius: 8px 8px 0 0; padding: 4px 0 6px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.18); }
-    .lb-step.first .base { height: 60px; background: linear-gradient(180deg, #ffd24a, var(--gold-bright)); color: var(--ink-warm); }
-    .lb-step.first .ava { font-size: 48px; }
-    .lb-step.second .base { height: 44px; background: linear-gradient(180deg, #d8d8d8, #a8a8a8); color: #3a3a3a; }
-    .lb-step.third .base { height: 32px; background: linear-gradient(180deg, #d99066, #a05a30); }
-    .lb-medal { position: absolute; top: -6px; right: 18%; font-size: 22px; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.18)); }
-    .lb-list { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: 6px 8px; margin-top: 8px; }
-    .lb-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; padding: 4px 6px; font-size: 13px; color: var(--ink-warm); border-bottom: 1px dashed rgba(184,134,11,0.3); }
+    .lb-step .ava { font-size: clamp(38px, 4.2vw, 60px); line-height: 1; }
+    .lb-step .nm { font-family: 'Caveat', cursive; font-size: clamp(20px, 2.2vw, 30px); font-weight: 600; color: var(--ink-warm); }
+    .lb-step .pts { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); font-weight: 600; color: var(--burgundy); }
+    .lb-step .base { margin-top: 4px; color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: clamp(30px, 3.4vw, 46px); font-weight: 700; border-radius: 8px 8px 0 0; padding: 4px 0 6px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.18); }
+    .lb-step.first .base { height: clamp(60px, 6.5vw, 90px); background: linear-gradient(180deg, #ffd24a, var(--gold-bright)); color: var(--ink-warm); }
+    .lb-step.first .ava { font-size: clamp(48px, 5vw, 72px); }
+    .lb-step.second .base { height: clamp(44px, 4.8vw, 70px); background: linear-gradient(180deg, #d8d8d8, #a8a8a8); color: #3a3a3a; }
+    .lb-step.third .base { height: clamp(32px, 3.6vw, 54px); background: linear-gradient(180deg, #d99066, #a05a30); }
+    .lb-medal { position: absolute; top: -6px; right: 18%; font-size: clamp(22px, 2.4vw, 32px); filter: drop-shadow(0 2px 0 rgba(0,0,0,0.18)); }
+    .lb-list { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: clamp(6px, 0.8vw, 12px) clamp(8px, 1vw, 14px); margin-top: clamp(8px, 1vw, 14px); }
+    .lb-row { display: grid; grid-template-columns: clamp(24px, 2.6vw, 36px) 1fr auto; gap: clamp(8px, 1vw, 14px); align-items: center; padding: clamp(4px, 0.6vw, 8px) clamp(6px, 0.8vw, 10px); font-size: clamp(13px, 1.5vw, 18px); color: var(--ink-warm); border-bottom: 1px dashed rgba(184,134,11,0.3); }
     .lb-row:last-child { border-bottom: none; }
-    .lb-row .pos { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); text-align: center; }
-    .lb-row .who { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .lb-row .ava-emoji { font-size: 18px; }
-    .lb-row .nm { font-family: 'Caveat', cursive; font-size: 16px; }
-    .lb-row .date { font-size: 10px; color: #888; }
-    .lb-row .pts { font-family: 'Caveat', cursive; font-size: 18px; color: var(--gold-bright); }
+    .lb-row .pos { font-family: 'Caveat', cursive; font-size: clamp(18px, 2vw, 26px); font-weight: 600; color: var(--burgundy); text-align: center; }
+    .lb-row .who { display: flex; align-items: center; gap: clamp(6px, 0.8vw, 10px); flex-wrap: wrap; }
+    .lb-row .ava-emoji { font-size: clamp(18px, 2vw, 26px); }
+    .lb-row .nm { font-family: 'Caveat', cursive; font-size: clamp(16px, 1.8vw, 22px); font-weight: 600; }
+    .lb-row .date { font-size: clamp(10px, 1.1vw, 14px); color: #888; }
+    .lb-row .pts { font-family: 'Caveat', cursive; font-size: clamp(18px, 2vw, 26px); font-weight: 600; color: var(--gold-bright); }
     .lb-row.me { background: linear-gradient(90deg, rgba(212,160,23,0.15), rgba(128,0,32,0.08)); border-radius: 6px; box-shadow: inset 2px 0 0 var(--burgundy); }
-    .lb-empty { text-align: center; padding: 24px; color: #888; font-family: 'Caveat', cursive; font-size: 18px; }
-    .lb-btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+    .lb-empty { text-align: center; padding: clamp(24px, 2.8vw, 40px); color: #888; font-family: 'Caveat', cursive; font-size: clamp(18px, 2vw, 26px); }
+    .lb-btn-row { display: flex; gap: clamp(10px, 1.2vw, 16px); justify-content: center; margin-top: clamp(14px, 1.6vw, 22px); flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -1171,7 +1189,7 @@
           <div className="mm-card">
             <div className="mm-card-title">
               <span>➕ Somas</span>
-              <span style={{ fontSize: 12, color: '#888' }}>Nível {profile.somas.level}</span>
+              <span className="level">Nível {profile.somas.level}</span>
             </div>
             <div className="mm-card-modes">
               <div className="mm-mode" onClick={onLearn} role="button" aria-label="Modo Aprender">
@@ -1206,7 +1224,7 @@
             </div>
             <Mascot size={52} perched={true} />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
+          <div className="ta-lobby-grid">
             {profiles.map((p, i) => {
               const best = bestByName[p.name.toLowerCase()];
               return (
@@ -1215,17 +1233,11 @@
                   onClick={() => onSelectProfile(p.name)}
                   role="button"
                   aria-label={`Jogar como ${p.name}`}
-                  style={{
-                    background: 'repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.05) 6px 7px), var(--paper-cream)',
-                    border: '2px solid var(--bronze)', borderRadius: 12, padding: '10px 6px',
-                    textAlign: 'center', boxShadow: '2px 3px 0 rgba(0,0,0,0.10)',
-                    transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)`, cursor: 'pointer',
-                    minHeight: 110,
-                  }}
+                  className={`ta-lobby-card${i % 2 === 0 ? '' : ' alt'}`}
                 >
-                  <div style={{ fontSize: 32 }}>{p.avatar}</div>
-                  <div style={{ fontFamily: 'Caveat, cursive', fontSize: 20, color: 'var(--ink-warm)' }}>{p.name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--burgundy)' }}>
+                  <div className="ta-lobby-avatar">{p.avatar}</div>
+                  <div className="ta-lobby-name">{p.name}</div>
+                  <div className="ta-lobby-best">
                     {best ? `Melhor: ${best} pts` : '— sem records —'}
                   </div>
                 </div>
@@ -1235,24 +1247,15 @@
               onClick={onCreateNew}
               role="button"
               aria-label="Criar perfil novo"
-              style={{
-                background: 'transparent', border: '2px dashed var(--bronze)', borderRadius: 12,
-                padding: '10px 6px', textAlign: 'center', color: 'var(--bronze)', cursor: 'pointer',
-                fontFamily: 'Caveat, cursive', minHeight: 110,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              }}
+              className="ta-lobby-new"
             >
-              <div style={{ fontSize: 32 }}>+</div>
-              <div style={{ fontSize: 18 }}>Novo</div>
+              <div className="plus">+</div>
+              <div className="lbl">Novo</div>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 18, flexWrap: 'wrap' }}>
-            <button onClick={onBack}
-              style={{ background: 'transparent', border: '1.5px solid var(--bronze)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', color: 'var(--ink-warm)', minHeight: 56 }}
-            >← Voltar</button>
-            <button onClick={onSeeMural}
-              style={{ background: 'var(--paper-cream)', border: '2px solid var(--burgundy)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, color: 'var(--burgundy)', cursor: 'pointer', boxShadow: '2px 3px 0 rgba(128,0,32,0.18)', minHeight: 56 }}
-            >🏆 Ver Mural</button>
+          <div className="ta-lobby-actions">
+            <button onClick={onBack} className="ta-lobby-btn">← Voltar</button>
+            <button onClick={onSeeMural} className="ta-lobby-btn mural">🏆 Ver Mural</button>
           </div>
         </div>
       );
@@ -1934,13 +1937,13 @@
               <div className="es-mini-title">No Mural ficas em…</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {top5.length === 0 ? (
-                  <div style={{ textAlign: 'center', color: '#888', fontSize: 12, padding: 8 }}>(Mural vazio)</div>
+                  <div style={{ textAlign: 'center', color: '#888', fontSize: 'clamp(12px, 1.4vw, 18px)', padding: 8 }}>(Mural vazio)</div>
                 ) : top5.map((e, i) => {
                   const isMe = myCurrentEntry && e === myCurrentEntry;
                   return (
                     <div key={i} className={`es-mini-row ${isMe ? 'me' : ''}`}>
                       <span className="pos">{i + 1}</span>
-                      <span style={{ fontSize: 18, textAlign: 'center' }}>{e.avatar}</span>
+                      <span className="ava-emoji">{e.avatar}</span>
                       <span className="nm">{e.profileName}{isMe ? ' (tu)' : ''}</span>
                       <span className="pts">{e.points} ✨</span>
                     </div>
@@ -1948,9 +1951,7 @@
                 })}
               </div>
               <div style={{ textAlign: 'center', marginTop: 8 }}>
-                <button onClick={onSeeMural} className="es-btn primary"
-                  style={{ fontSize: 14, padding: '8px 14px', minHeight: 48 }}
-                >Ver Mural completo</button>
+                <button onClick={onSeeMural} className="es-btn primary es-btn-mini">Ver Mural completo</button>
               </div>
             </div>
           </div>
