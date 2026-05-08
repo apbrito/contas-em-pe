@@ -1,28 +1,27 @@
-# Contas em Pé
+# Jogos da Coruja
 
-Um jogo de somas para ajudar crianças do 2.º ano a praticar contas
-com transporte. Joga-se no tablet, sem internet, sem anúncios.
+Jogos pedagógicos para crianças do 2.º ano. Joga-se no tablet, sem
+internet, sem anúncios.
 
 🦉 — *com a coruja como guia*
 
 ## O que é
 
-Os miúdos do 2.º ano aprendem somas com transporte na escola. É a
-altura em que perceber "vai 1" deixa de ser misterioso. Esta app
-treina exactamente isso, coluna a coluna, com 12 níveis de
-dificuldade crescente (de 2 a 4 dígitos, 2 a 4 parcelas).
+Um conjunto de jogos para acompanhar miúdos na escola — começando
+pela matemática e a expandir para outros temas com o tempo. A
+coruja é a mascote que acompanha em cada jogo: nunca repreende,
+sugere uma dica suave quando há erro, e celebra quando há acerto.
 
-A coruja acompanha. Quando a criança erra, a coruja não a repreende
-— sugere uma dica suave, depois mais específica, e só revela a
-resposta se for mesmo preciso. Linguagem positiva, sem "ERRADO!"
-nem "FALHASTE!".
+A primeira porta-de-entrada é o **Contas em Pé** — somas com
+transporte, em coluna, com 12 níveis crescentes (de 2 a 4 dígitos,
+2 a 4 parcelas). É o que abre quando instalas a app.
 
 Foi feita por um pai para o filho. Está pública para quem quiser
 usar com os seus.
 
 ## Como instalar no tablet
 
-1. **Abre o link** [https://apbrito.github.io/contas-em-pe/](https://apbrito.github.io/contas-em-pe/)
+1. **Abre o link** [https://apbrito.github.io/jogos-da-coruja/](https://apbrito.github.io/jogos-da-coruja/)
    no Chrome (Android) ou Safari (iPad).
 2. **Adiciona ao ecrã principal**:
    - Android (Chrome): toca no menu (três pontos) → "Adicionar ao
@@ -34,7 +33,7 @@ usar com os seus.
 4. **Funciona offline** depois disto. A primeira abertura precisa
    de internet (descarrega a app); depois funciona sem rede.
 
-## Como funciona o jogo
+## Contas em Pé — o jogo de matemática
 
 - **Modo Aprender**: a criança sobe níveis ao seu ritmo. Sobe quando
   acerta 5 seguidas à 1.ª, ou quando faz 50 pontos. O painel da
@@ -93,8 +92,12 @@ versão (opcional, com toggle no painel parental).
 **A criança subiu de nível e ficou frustrada — como volto atrás?**
 Engrenagem ⚙ → desliza o nível para baixo. Pode descer livremente.
 
+**Vão chegar mais jogos?** Sim, esse é o plano. Áudio, mascote
+com mais expressões, e novos jogos para outros temas — tudo a
+chegar a tempo.
+
 **Como reportar um bug?** Abre uma issue em
-[GitHub Issues](https://github.com/apbrito/contas-em-pe/issues).
+[GitHub Issues](https://github.com/apbrito/jogos-da-coruja/issues).
 
 ## Origem
 

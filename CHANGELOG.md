@@ -4,6 +4,19 @@ Todas as alterações visíveis ao utilizador da app.
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/),
 versionamento semântico ([SemVer](https://semver.org/)).
 
+## [1.2.0] — 2026-05-08
+
+### Renome do projecto
+- O conjunto passa a chamar-se **Jogos da Coruja**, com o objectivo
+  de comportar mais jogos pedagógicos no futuro (palavras, lógica,
+  ciência…). O jogo de matemática mantém o nome **Contas em Pé**.
+- URL pública nova: [https://apbrito.github.io/jogos-da-coruja/](https://apbrito.github.io/jogos-da-coruja/).
+  A URL antiga `apbrito.github.io/contas-em-pe/` é redirecionada
+  automaticamente pelo GitHub durante 1 ano.
+- Progresso dos jogadores é preservado: a chave de `localStorage`
+  mantém-se `contas_em_pe`, logo quem já estava a jogar não perde
+  pontos, níveis nem entradas no Mural.
+
 ## [1.1.1] — 2026-05-08
 
 ### Melhorias

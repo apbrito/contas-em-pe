@@ -58,7 +58,7 @@ def _generate_cert_with_cryptography(ip):
     from cryptography.x509.oid import NameOID
 
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "contas-em-pe-local")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "jogos-da-coruja-local")])
     now = datetime.now(timezone.utc)
     cert = (
         x509.CertificateBuilder()
@@ -95,7 +95,7 @@ def _generate_cert_with_openssl(ip):
         "distinguished_name = req_dn\n"
         "prompt = no\n"
         "[req_dn]\n"
-        "CN = contas-em-pe-local\n",
+        "CN = jogos-da-coruja-local\n",
         encoding="utf-8",
     )
     subprocess.run(
