@@ -261,40 +261,45 @@
       group('persistência localStorage');
 
       test('saveState escreve no localStorage', () => {
-        L.saveState({ level: 3, streak: 2, totalAttempts: 10, totalCorrectFirstTry: 7 });
+        const state = L.defaultState();
+        L.saveState(state);
         const raw = localStorage.getItem('contas_em_pe');
         assertTrue(raw !== null);
         const parsed = JSON.parse(raw);
-        assertEq(parsed.level, 3);
-        assertEq(parsed.streak, 2);
         assertEq(parsed.version, L.SCHEMA_VERSION);
-        assertTrue(typeof parsed.lastPlayed === 'string');
+        assertEq(parsed.lastProfile, null);
+        assertEq(parsed.profiles, {});
       });
 
       test('loadState lê do localStorage', () => {
-        L.saveState({ level: 5, streak: 3, totalAttempts: 20, totalCorrectFirstTry: 14 });
+        const state = L.defaultState();
+        state.lastProfile = 'jogador';
+        state.profiles['jogador'] = { name: 'jogador', avatar: '🦊', createdAt: '2026-05-07', somas: { level: 5, maxLevelReached: 5, points: 50, streak: 3, pointsSinceLastLevelUp: 0, totalAttempts: 20, totalCorrectFirstTry: 14, lastPlayed: '2026-05-07' } };
+        L.saveState(state);
         const s = L.loadState();
-        assertEq(s.level, 5);
-        assertEq(s.streak, 3);
+        assertEq(s.lastProfile, 'jogador');
+        assertEq(s.profiles.jogador.somas.level, 5);
+        assertEq(s.profiles.jogador.somas.streak, 3);
       });
 
       test('loadState devolve estado default quando não há nada guardado', () => {
         localStorage.removeItem('contas_em_pe');
         const s = L.loadState();
-        assertEq(s.level, 1);
-        assertEq(s.streak, 0);
-        assertEq(s.totalAttempts, 0);
-        assertEq(s.totalCorrectFirstTry, 0);
+        assertEq(s.version, 3);
+        assertEq(s.lastProfile, null);
+        assertEq(s.profiles, {});
+        assertEq(s.leaderboards, {});
       });
 
       test('loadState ignora dados corrompidos e devolve default', () => {
         localStorage.setItem('contas_em_pe', 'isto não é json válido');
         const s = L.loadState();
-        assertEq(s.level, 1);
+        assertEq(s.version, 3);
+        assertEq(s.lastProfile, null);
       });
 
       test('resetState limpa o localStorage', () => {
-        L.saveState({ level: 7, streak: 1, totalAttempts: 30, totalCorrectFirstTry: 20 });
+        L.saveState(L.defaultState());
         L.resetState();
         const raw = localStorage.getItem('contas_em_pe');
         assertTrue(raw === null);
@@ -306,26 +311,27 @@
         localStorage.setItem('contas_em_pe', JSON.stringify(obj));
       }
 
+      // Após v3: loadState migra v1→v2→v3; level fica em profiles.jogador.somas.level
       test('loadState clampa level acima de 12 para 12', () => {
         writeRawState({ level: 50, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
-        assertEq(L.loadState().level, 12);
+        assertEq(L.loadState().profiles.jogador.somas.level, 12);
       });
 
       test('loadState clampa level <= 0 para 1', () => {
         writeRawState({ level: 0, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
-        assertEq(L.loadState().level, 1);
+        assertEq(L.loadState().profiles.jogador.somas.level, 1);
         writeRawState({ level: -5, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
-        assertEq(L.loadState().level, 1);
+        assertEq(L.loadState().profiles.jogador.somas.level, 1);
       });
 
       test('loadState rejeita NaN/Infinity em level (volta a 1)', () => {
         writeRawState({ level: 'banana', streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
-        assertEq(L.loadState().level, 1);
+        assertEq(L.loadState().profiles.jogador.somas.level, 1);
       });
 
       test('loadState arredonda level fraccional para baixo', () => {
         writeRawState({ level: 3.7, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-01-01', version: 1 });
-        assertEq(L.loadState().level, 3);
+        assertEq(L.loadState().profiles.jogador.somas.level, 3);
       });
 
       group('P1 audit — heterogeneidade de magnitudes em generateExercise');
@@ -426,43 +432,49 @@
 
       group('Sistema de pontos — defaultState e persistência');
 
-      test('defaultState inclui points: 0', () => {
+      test('defaultState v3 não tem points a nível raiz', () => {
         L.resetState();
         const s = L.loadState();
-        assertEq(s.points, 0);
+        assertEq(s.version, 3);
+        assertEq(s.profiles, {});
+        assertTrue(s.points === undefined);
       });
 
-      test('saveState persiste points', () => {
+      test('saveState persiste estado v3 completo', () => {
         L.resetState();
-        L.saveState({ level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, points: 75 });
-        assertEq(L.loadState().points, 75);
+        const state = L.defaultState();
+        state.lastProfile = 'jogador';
+        state.profiles['jogador'] = { name: 'jogador', avatar: '🦊', createdAt: '2026-05-07', somas: { level: 1, maxLevelReached: 1, points: 75, streak: 0, pointsSinceLastLevelUp: 0, totalAttempts: 0, totalCorrectFirstTry: 0, lastPlayed: '2026-05-07' } };
+        L.saveState(state);
+        assertEq(L.loadState().profiles.jogador.somas.points, 75);
       });
 
-      test('SCHEMA_VERSION é 2', () => {
-        assertEq(L.SCHEMA_VERSION, 2);
+      test('SCHEMA_VERSION é 3', () => {
+        assertEq(L.SCHEMA_VERSION, 3);
       });
 
-      test('saveState escreve com version 2', () => {
+      test('saveState escreve com version 3', () => {
         L.resetState();
-        L.saveState({ level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0, points: 0 });
+        L.saveState(L.defaultState());
         const raw = JSON.parse(localStorage.getItem('contas_em_pe'));
-        assertEq(raw.version, 2);
+        assertEq(raw.version, 3);
       });
 
-      group('Sistema de pontos — migração schema v1 → v2');
+      group('Sistema de pontos — migração schema v1 → v3');
 
-      test('Estado v1 com totalCorrectFirstTry=8 migra para points=80', () => {
+      test('Estado v1 com totalCorrectFirstTry=8 migra para points=80 em profiles.jogador.somas', () => {
         localStorage.setItem('contas_em_pe', JSON.stringify({
           level: 3, streak: 1, totalAttempts: 12, totalCorrectFirstTry: 8,
           lastPlayed: '2026-01-01', version: 1,
         }));
         const s = L.loadState();
+        assertEq(s.version, 3);
         // Migração heurística: pontos retroactivos = totalCorrectFirstTry * 10
-        assertEq(s.points, 80);
+        assertEq(s.profiles.jogador.somas.points, 80);
         // Mantém os outros campos
-        assertEq(s.level, 3);
-        assertEq(s.streak, 1);
-        assertEq(s.totalCorrectFirstTry, 8);
+        assertEq(s.profiles.jogador.somas.level, 3);
+        assertEq(s.profiles.jogador.somas.streak, 1);
+        assertEq(s.profiles.jogador.somas.totalCorrectFirstTry, 8);
       });
 
       test('Estado v1 limpo (sem progresso) migra para points=0', () => {
@@ -470,14 +482,615 @@
           level: 1, streak: 0, totalAttempts: 0, totalCorrectFirstTry: 0,
           lastPlayed: '2026-01-01', version: 1,
         }));
-        assertEq(L.loadState().points, 0);
+        assertEq(L.loadState().profiles.jogador.somas.points, 0);
       });
 
-      test('Schema desconhecido (>2) cai para defaultState', () => {
+      test('Schema desconhecido (>3) cai para defaultState', () => {
         localStorage.setItem('contas_em_pe', JSON.stringify({ version: 99, points: 9999 }));
         const s = L.loadState();
-        assertEq(s.level, 1);
-        assertEq(s.points, 0);
+        assertEq(s.version, 3);
+        assertEq(s.lastProfile, null);
+        assertEq(s.profiles, {});
+      });
+      group('Schema v3 — constantes');
+
+      test('SCHEMA_VERSION é 3', () => {
+        assertEq(L.SCHEMA_VERSION, 3);
+      });
+
+      test('AVATAR_OPTIONS tem 8 emojis', () => {
+        assertEq(L.AVATAR_OPTIONS.length, 8);
+      });
+
+      test('AVATAR_OPTIONS contém raposa, coelho, unicórnio, tartaruga, ouriço, guaxinim, dragão, borboleta', () => {
+        assertEq(L.AVATAR_OPTIONS, ['🦊','🐰','🦄','🐢','🦔','🦝','🐉','🦋']);
+      });
+
+      test('DEFAULT_AVATAR é raposa', () => {
+        assertEq(L.DEFAULT_AVATAR, '🦊');
+      });
+
+      test('MAX_PROFILES é 10', () => {
+        assertEq(L.MAX_PROFILES, 10);
+      });
+
+      test('POINTS_TO_LEVELUP é 50', () => {
+        assertEq(L.POINTS_TO_LEVELUP, 50);
+      });
+
+      test('HITS_TO_LEVEL_UP_TIMEATTACK é 5', () => {
+        assertEq(L.HITS_TO_LEVEL_UP_TIMEATTACK, 5);
+      });
+
+      test('TIME_ATTACK_DURATION_S é 600 (10 min)', () => {
+        assertEq(L.TIME_ATTACK_DURATION_S, 600);
+      });
+
+      test('LEADERBOARD_MAX_ENTRIES é 10', () => {
+        assertEq(L.LEADERBOARD_MAX_ENTRIES, 10);
+      });
+
+      group('Schema v3 — defaultState e migração v2→v3');
+
+      test('defaultState devolve schema v3 vazio', () => {
+        const wasSet = localStorage.getItem('contas_em_pe');
+        localStorage.removeItem('contas_em_pe');
+        const fresh = L.loadState();
+        assertEq(fresh.version, 3);
+        assertEq(fresh.lastProfile, null);
+        assertEq(fresh.profiles, {});
+        assertEq(fresh.leaderboards, {});
+        assertEq(fresh.appConfig.mascotName, null);
+        if (wasSet) localStorage.setItem('contas_em_pe', wasSet);
+      });
+
+      test('migrateV2toV3 produz schema v3 válido', () => {
+        const v2 = { version: 2, level: 5, streak: 2, points: 80, totalAttempts: 30, totalCorrectFirstTry: 22, lastPlayed: '2026-04-15' };
+        const v3 = L.migrateV2toV3(v2);
+        assertEq(v3.version, 3);
+        assertEq(v3.lastProfile, 'jogador');
+        assertEq(Object.keys(v3.profiles), ['jogador']);
+        assertEq(v3.profiles.jogador.name, 'jogador');
+        assertEq(v3.profiles.jogador.avatar, '🦊');
+        assertEq(v3.profiles.jogador.somas.level, 5);
+        assertEq(v3.profiles.jogador.somas.maxLevelReached, 5);
+        assertEq(v3.profiles.jogador.somas.points, 80);
+        assertEq(v3.profiles.jogador.somas.pointsSinceLastLevelUp, 0);
+        assertEq(v3.profiles.jogador.somas.lastPlayed, '2026-04-15');
+        assertEq(v3.leaderboards, {});
+      });
+
+      test('migrateV2toV3 lida com nível inválido (clamp)', () => {
+        const v2 = { version: 2, level: 99, streak: 0, points: 0, totalAttempts: 0, totalCorrectFirstTry: 0 };
+        const v3 = L.migrateV2toV3(v2);
+        assertEq(v3.profiles.jogador.somas.level, 12);
+        assertEq(v3.profiles.jogador.somas.maxLevelReached, 12);
+      });
+
+      test('migrateV2toV3 com lastPlayed em falta usa hoje', () => {
+        const v2 = { version: 2, level: 1, streak: 0, points: 0, totalAttempts: 0, totalCorrectFirstTry: 0 };
+        const v3 = L.migrateV2toV3(v2);
+        const today = new Date().toISOString().slice(0, 10);
+        assertEq(v3.profiles.jogador.somas.lastPlayed, today);
+      });
+
+      test('migrateV2toV3 com points negativo cai para 0', () => {
+        const v2 = { version: 2, level: 1, streak: 0, points: -5, totalAttempts: 0, totalCorrectFirstTry: 0 };
+        const v3 = L.migrateV2toV3(v2);
+        assertEq(v3.profiles.jogador.somas.points, 0);
+      });
+
+      test('loadState faz migração v2→v3 automática', () => {
+        const wasSet = localStorage.getItem('contas_em_pe');
+        const wasBackup = localStorage.getItem('contas_em_pe_backup_v2');
+        const v2 = { version: 2, level: 7, streak: 3, points: 200, totalAttempts: 50, totalCorrectFirstTry: 38, lastPlayed: '2026-04-20' };
+        localStorage.setItem('contas_em_pe', JSON.stringify(v2));
+        const result = L.loadState();
+        assertEq(result.version, 3);
+        assertEq(result.profiles.jogador.somas.level, 7);
+        assertEq(result.profiles.jogador.somas.points, 200);
+        // Backup criado
+        const backup = JSON.parse(localStorage.getItem('contas_em_pe_backup_v2') || 'null');
+        assertEq(backup.version, 2);
+        assertEq(backup.points, 200);
+        // Cleanup
+        if (wasSet) localStorage.setItem('contas_em_pe', wasSet); else localStorage.removeItem('contas_em_pe');
+        if (wasBackup) localStorage.setItem('contas_em_pe_backup_v2', wasBackup); else localStorage.removeItem('contas_em_pe_backup_v2');
+      });
+
+      test('loadState devolve estado v3 sem migrar quando já é v3', () => {
+        const wasSet = localStorage.getItem('contas_em_pe');
+        const v3 = {
+          version: 3,
+          lastProfile: 'Sofia',
+          appConfig: { mascotName: 'Olívia' },
+          profiles: { Sofia: { name: 'Sofia', avatar: '🐰', createdAt: '2026-05-01', somas: { level: 3, maxLevelReached: 3, points: 30, streak: 1, pointsSinceLastLevelUp: 5, totalAttempts: 10, totalCorrectFirstTry: 8, lastPlayed: '2026-05-01' } } },
+          leaderboards: {},
+        };
+        localStorage.setItem('contas_em_pe', JSON.stringify(v3));
+        const result = L.loadState();
+        assertEq(result.version, 3);
+        assertEq(result.lastProfile, 'Sofia');
+        assertEq(result.profiles.Sofia.somas.level, 3);
+        assertEq(result.appConfig.mascotName, 'Olívia');
+        if (wasSet) localStorage.setItem('contas_em_pe', wasSet); else localStorage.removeItem('contas_em_pe');
+      });
+
+      test('loadState com versão desconhecida cai para defaultState', () => {
+        const wasSet = localStorage.getItem('contas_em_pe');
+        localStorage.setItem('contas_em_pe', JSON.stringify({ version: 99, foo: 'bar' }));
+        const result = L.loadState();
+        assertEq(result.version, 3);
+        assertEq(result.lastProfile, null);
+        assertEq(result.profiles, {});
+        if (wasSet) localStorage.setItem('contas_em_pe', wasSet); else localStorage.removeItem('contas_em_pe');
+      });
+
+      test('emptyOperationProgress devolve campos esperados', () => {
+        const p = L.emptyOperationProgress();
+        assertEq(p.level, 1);
+        assertEq(p.maxLevelReached, 1);
+        assertEq(p.points, 0);
+        assertEq(p.streak, 0);
+        assertEq(p.pointsSinceLastLevelUp, 0);
+        assertEq(p.totalAttempts, 0);
+        assertEq(p.totalCorrectFirstTry, 0);
+        const today = new Date().toISOString().slice(0, 10);
+        assertEq(p.lastPlayed, today);
+      });
+
+      group('validateProfileName');
+
+      test('Nome válido devolve ok:true', () => {
+        assertEq(L.validateProfileName('jogador', []), { ok: true });
+      });
+
+      test('Nome com acentos é válido', () => {
+        assertEq(L.validateProfileName('Inês', []), { ok: true });
+      });
+
+      test('Nome com espaços internos é válido', () => {
+        assertEq(L.validateProfileName('Maria João', []), { ok: true });
+      });
+
+      test('Nome trimmed é avaliado (espaços nas pontas)', () => {
+        assertEq(L.validateProfileName('  Pai  ', []), { ok: true });
+      });
+
+      test('Nome vazio devolve empty', () => {
+        assertEq(L.validateProfileName('', []), { ok: false, reason: 'empty' });
+      });
+
+      test('Nome só com espaços devolve empty', () => {
+        assertEq(L.validateProfileName('   ', []), { ok: false, reason: 'empty' });
+      });
+
+      test('Nome com 13 caracteres devolve too-long', () => {
+        assertEq(L.validateProfileName('Abcdefghijklm', []), { ok: false, reason: 'too-long' });
+      });
+
+      test('Nome com 12 caracteres é válido (limite incluído)', () => {
+        assertEq(L.validateProfileName('Abcdefghijkl', []), { ok: true });
+      });
+
+      test('Nome com números devolve invalid-chars', () => {
+        assertEq(L.validateProfileName('jogador2', []), { ok: false, reason: 'invalid-chars' });
+      });
+
+      test('Nome com símbolos devolve invalid-chars', () => {
+        assertEq(L.validateProfileName('jogador!', []), { ok: false, reason: 'invalid-chars' });
+      });
+
+      test('Nome com emoji devolve invalid-chars', () => {
+        assertEq(L.validateProfileName('jogador🦊', []), { ok: false, reason: 'invalid-chars' });
+      });
+
+      test('Duplicado case-insensitive devolve duplicate', () => {
+        assertEq(L.validateProfileName('duarte', ['jogador']), { ok: false, reason: 'duplicate' });
+      });
+
+      test('Nome igual a existente após trim devolve duplicate', () => {
+        assertEq(L.validateProfileName(' Mãe ', ['Mãe']), { ok: false, reason: 'duplicate' });
+      });
+
+      test('input não-string devolve empty', () => {
+        assertEq(L.validateProfileName(null, []), { ok: false, reason: 'empty' });
+        assertEq(L.validateProfileName(undefined, []), { ok: false, reason: 'empty' });
+        assertEq(L.validateProfileName(42, []), { ok: false, reason: 'empty' });
+      });
+
+      test('Nome com hífen devolve invalid-chars', () => {
+        assertEq(L.validateProfileName('Maria-João', []), { ok: false, reason: 'invalid-chars' });
+      });
+
+      group('Perfis — CRUD');
+
+      function freshState() {
+        return {
+          version: 3,
+          lastProfile: null,
+          appConfig: { mascotName: null },
+          profiles: {},
+          leaderboards: {},
+        };
+      }
+
+      test('listProfiles em estado vazio devolve []', () => {
+        assertEq(L.listProfiles(freshState()), []);
+      });
+
+      test('listProfiles devolve todos os perfis criados', () => {
+        let s = L.createProfile(freshState(), 'jogador', '🦊').state;
+        s = L.createProfile(s, 'Mãe', '🐰').state;
+        const list = L.listProfiles(s);
+        assertEq(list.length, 2);
+        assertEq(list.map(p => p.name).sort(), ['jogador', 'Mãe']);
+      });
+
+      test('getProfile devolve perfil existente', () => {
+        const s = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const p = L.getProfile(s, 'jogador');
+        assertEq(p.name, 'jogador');
+        assertEq(p.avatar, '🦊');
+      });
+
+      test('getProfile devolve undefined para inexistente', () => {
+        assertEq(L.getProfile(freshState(), 'Fantasma'), undefined);
+      });
+
+      test('createProfile cria primeiro perfil e define lastProfile', () => {
+        const r = L.createProfile(freshState(), 'jogador', '🦊');
+        assertTrue(r.ok);
+        assertEq(r.profile.name, 'jogador');
+        assertEq(r.profile.avatar, '🦊');
+        assertEq(r.state.lastProfile, 'jogador');
+        assertEq(Object.keys(r.state.profiles), ['jogador']);
+      });
+
+      test('createProfile inicializa somas com emptyOperationProgress', () => {
+        const r = L.createProfile(freshState(), 'jogador', '🦊');
+        assertEq(r.profile.somas.level, 1);
+        assertEq(r.profile.somas.maxLevelReached, 1);
+        assertEq(r.profile.somas.points, 0);
+        assertEq(r.profile.somas.streak, 0);
+        assertEq(r.profile.somas.pointsSinceLastLevelUp, 0);
+      });
+
+      test('createProfile mantém lastProfile existente ao adicionar segundo perfil', () => {
+        const s1 = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const r = L.createProfile(s1, 'Mãe', '🐰');
+        assertTrue(r.ok);
+        assertEq(r.state.lastProfile, 'jogador');
+        assertEq(Object.keys(r.state.profiles).sort(), ['jogador', 'Mãe']);
+      });
+
+      test('createProfile rejeita nome inválido', () => {
+        const r = L.createProfile(freshState(), '', '🦊');
+        assertFalse(r.ok);
+        assertEq(r.reason, 'empty');
+      });
+
+      test('createProfile rejeita duplicado case-insensitive', () => {
+        const s1 = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const r = L.createProfile(s1, 'duarte', '🐰');
+        assertFalse(r.ok);
+        assertEq(r.reason, 'duplicate');
+      });
+
+      test('createProfile rejeita ao atingir limite (10)', () => {
+        let s = freshState();
+        const names = ['Ana','Bia','Caio','Dia','Edu','Filo','Gil','Hugo','Iza','Jade'];
+        for (const n of names) s = L.createProfile(s, n, '🦊').state;
+        assertEq(Object.keys(s.profiles).length, 10);
+        const r = L.createProfile(s, 'Kiko', '🦊');
+        assertFalse(r.ok);
+        assertEq(r.reason, 'limit-reached');
+      });
+
+      test('createProfile fallback para avatar default se inválido', () => {
+        const r = L.createProfile(freshState(), 'Sofia', '🐍');
+        assertTrue(r.ok);
+        assertEq(r.profile.avatar, '🦊');
+      });
+
+      test('createProfile aceita todos os 8 avatares válidos', () => {
+        let s = freshState();
+        const avatars = ['🦊', '🐰', '🦄', '🐢', '🦔', '🦝', '🐉', '🦋'];
+        const names = ['Ana', 'Bia', 'Cai', 'Dia', 'Eva', 'Fia', 'Gia', 'Hia'];
+        for (let i = 0; i < avatars.length; i++) {
+          s = L.createProfile(s, names[i], avatars[i]).state;
+          assertEq(s.profiles[names[i]].avatar, avatars[i]);
+        }
+      });
+
+      test('createProfile usa nome trimmed', () => {
+        const r = L.createProfile(freshState(), '  Pai  ', '🦝');
+        assertTrue(r.ok);
+        assertEq(r.profile.name, 'Pai');
+        assertEq(Object.keys(r.state.profiles), ['Pai']);
+      });
+
+      test('deleteProfile remove e ajusta lastProfile', () => {
+        const s1 = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const s2 = L.createProfile(s1, 'Mãe', '🐰').state;
+        // s2.lastProfile === 'jogador'
+        const r = L.deleteProfile(s2, 'jogador');
+        assertTrue(r.ok);
+        assertEq(Object.keys(r.state.profiles), ['Mãe']);
+        assertEq(r.state.lastProfile, 'Mãe');
+      });
+
+      test('deleteProfile do lastProfile com vários restantes escolhe primeiro', () => {
+        let s = L.createProfile(freshState(), 'A', '🦊').state;
+        s = L.createProfile(s, 'B', '🐰').state;
+        s = L.createProfile(s, 'C', '🦄').state;
+        s = L.setActiveProfile(s, 'B').state;
+        const r = L.deleteProfile(s, 'B');
+        assertTrue(r.ok);
+        assertEq(r.state.lastProfile, 'A');
+      });
+
+      test('deleteProfile do último perfil deixa lastProfile null', () => {
+        const s1 = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const r = L.deleteProfile(s1, 'jogador');
+        assertTrue(r.ok);
+        assertEq(r.state.profiles, {});
+        assertEq(r.state.lastProfile, null);
+      });
+
+      test('deleteProfile não toca em leaderboards', () => {
+        let s = freshState();
+        s.leaderboards = { 'somas:tempo': [{ profileName: 'jogador', avatar: '🦊', points: 50, exercises: 10, hitRateFirstTry: 1, maxLevelReached: 3, date: '2026-05-01' }] };
+        s = L.createProfile(s, 'jogador', '🦊').state;
+        const r = L.deleteProfile(s, 'jogador');
+        assertEq(r.state.leaderboards['somas:tempo'].length, 1);
+      });
+
+      test('deleteProfile devolve not-found para perfil inexistente', () => {
+        const r = L.deleteProfile(freshState(), 'Fantasma');
+        assertFalse(r.ok);
+        assertEq(r.reason, 'not-found');
+      });
+
+      test('deleteProfile preserva lastProfile se eliminar outro perfil', () => {
+        const s1 = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const s2 = L.createProfile(s1, 'Mãe', '🐰').state;
+        // Estado: lastProfile = 'jogador'
+        const r = L.deleteProfile(s2, 'Mãe');
+        assertTrue(r.ok);
+        assertEq(r.state.lastProfile, 'jogador');
+      });
+
+      test('setActiveProfile muda lastProfile', () => {
+        let s = L.createProfile(freshState(), 'jogador', '🦊').state;
+        s = L.createProfile(s, 'Mãe', '🐰').state;
+        const r = L.setActiveProfile(s, 'Mãe');
+        assertTrue(r.ok);
+        assertEq(r.state.lastProfile, 'Mãe');
+      });
+
+      test('setActiveProfile devolve not-found para inexistente', () => {
+        const s = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const r = L.setActiveProfile(s, 'Fantasma');
+        assertFalse(r.ok);
+        assertEq(r.reason, 'not-found');
+      });
+
+      test('getActiveProfile devolve perfil correcto', () => {
+        const s = L.createProfile(freshState(), 'jogador', '🦊').state;
+        const p = L.getActiveProfile(s);
+        assertEq(p.name, 'jogador');
+      });
+
+      test('getActiveProfile devolve null se lastProfile aponta para perfil inexistente', () => {
+        const s = { ...freshState(), lastProfile: 'Fantasma' };
+        assertEq(L.getActiveProfile(s), null);
+      });
+
+      test('getActiveProfile devolve null se lastProfile é null', () => {
+        assertEq(L.getActiveProfile(freshState()), null);
+      });
+
+      group('Leaderboard');
+
+      function freshLBState() {
+        return {
+          version: 3,
+          lastProfile: null,
+          appConfig: { mascotName: null },
+          profiles: {},
+          leaderboards: {},
+        };
+      }
+
+      function makeEntry(name, avatar, points, exercises, date) {
+        return {
+          profileName: name,
+          avatar: avatar,
+          points: points,
+          exercises: exercises,
+          hitRateFirstTry: exercises > 0 ? 1 : 0,
+          maxLevelReached: 2,
+          date: date || '2026-05-01',
+        };
+      }
+
+      test('getLeaderboard em estado vazio devolve []', () => {
+        assertEq(L.getLeaderboard(freshLBState(), 'somas', 'tempo'), []);
+      });
+
+      test('getLeaderboard sem leaderboards no state devolve []', () => {
+        const s = { version: 3, profiles: {} };
+        assertEq(L.getLeaderboard(s, 'somas', 'tempo'), []);
+      });
+
+      test('addLeaderboardEntry insere primeira entry', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', makeEntry('jogador', '🦊', 50, 10));
+        assertTrue(r.ok);
+        assertEq(r.state.leaderboards['somas:tempo'].length, 1);
+        assertEq(r.state.leaderboards['somas:tempo'][0].points, 50);
+      });
+
+      test('addLeaderboardEntry rejeita 0 pontos', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', makeEntry('jogador', '🦊', 0, 0));
+        assertFalse(r.ok);
+        assertEq(r.reason, 'no-points');
+      });
+
+      test('addLeaderboardEntry rejeita pontos negativos', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', makeEntry('jogador', '🦊', -5, 0));
+        assertFalse(r.ok);
+        assertEq(r.reason, 'no-points');
+      });
+
+      test('addLeaderboardEntry rejeita pontos não-numéricos', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', { profileName: 'X', avatar: '🦊', points: 'oops' });
+        assertFalse(r.ok);
+        assertEq(r.reason, 'no-points');
+      });
+
+      test('addLeaderboardEntry ordena por pontos desc', () => {
+        let s = freshLBState();
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('A', '🦊', 30, 5)).state;
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('B', '🐰', 80, 10)).state;
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('C', '🦄', 50, 8)).state;
+        const lb = L.getLeaderboard(s, 'somas', 'tempo');
+        assertEq(lb.map(e => e.profileName), ['B', 'C', 'A']);
+      });
+
+      test('addLeaderboardEntry desempata por exercícios desc', () => {
+        let s = freshLBState();
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('A', '🦊', 50, 7)).state;
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('B', '🐰', 50, 12)).state;
+        const lb = L.getLeaderboard(s, 'somas', 'tempo');
+        assertEq(lb.map(e => e.profileName), ['B', 'A']);
+      });
+
+      test('addLeaderboardEntry mantém top 10 (descarta excedentes)', () => {
+        let s = freshLBState();
+        for (let i = 0; i < 15; i++) {
+          s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('P' + i, '🦊', i + 1, 5)).state;
+        }
+        const lb = L.getLeaderboard(s, 'somas', 'tempo');
+        assertEq(lb.length, 10);
+        assertEq(lb[0].points, 15);
+        assertEq(lb[9].points, 6);
+      });
+
+      test('addLeaderboardEntry usa date default (hoje) se ausente', () => {
+        const today = new Date().toISOString().slice(0, 10);
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', { profileName: 'jogador', avatar: '🦊', points: 30, exercises: 5 });
+        assertEq(r.state.leaderboards['somas:tempo'][0].date, today);
+      });
+
+      test('addLeaderboardEntry usa avatar default se ausente', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', { profileName: 'jogador', points: 30, exercises: 5 });
+        assertEq(r.state.leaderboards['somas:tempo'][0].avatar, '🦊');
+      });
+
+      test('topN devolve N entries (slice)', () => {
+        let s = freshLBState();
+        for (let i = 0; i < 5; i++) {
+          s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('P' + i, '🦊', 100 - i, 10)).state;
+        }
+        assertEq(L.topN(s, 'somas', 'tempo', 3).length, 3);
+        assertEq(L.topN(s, 'somas', 'tempo', 0).length, 0);
+        assertEq(L.topN(s, 'somas', 'tempo', 100).length, 5);
+      });
+
+      test('getLeaderboard devolve cópia (não permite mutação externa)', () => {
+        const s = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', makeEntry('jogador', '🦊', 50, 10)).state;
+        const lb = L.getLeaderboard(s, 'somas', 'tempo');
+        lb.length = 0;
+        const lb2 = L.getLeaderboard(s, 'somas', 'tempo');
+        assertEq(lb2.length, 1);
+      });
+
+      test('addLeaderboardEntry preserva entries em outras chaves', () => {
+        let s = freshLBState();
+        s = L.addLeaderboardEntry(s, 'somas', 'tempo', makeEntry('A', '🦊', 50, 5)).state;
+        s = L.addLeaderboardEntry(s, 'multi', 'tempo', makeEntry('B', '🐰', 70, 8)).state;
+        assertEq(L.getLeaderboard(s, 'somas', 'tempo').length, 1);
+        assertEq(L.getLeaderboard(s, 'multi', 'tempo').length, 1);
+      });
+
+      test('addLeaderboardEntry tipa campos opcionais ausentes', () => {
+        const r = L.addLeaderboardEntry(freshLBState(), 'somas', 'tempo', { profileName: 'jogador', points: 50 });
+        const e = r.state.leaderboards['somas:tempo'][0];
+        assertEq(e.exercises, 0);
+        assertEq(e.hitRateFirstTry, 0);
+        assertEq(e.maxLevelReached, 1);
+      });
+
+      group('Contra-relógio — pontos e ramp');
+
+      test('pointsForLevel à 1.ª nivel 1 = 10', () => {
+        assertEq(L.pointsForLevel(1, true), 10);
+      });
+
+      test('pointsForLevel com erros nivel 1 = 5', () => {
+        assertEq(L.pointsForLevel(1, false), 5);
+      });
+
+      test('pointsForLevel à 1.ª nivel 12 = 65', () => {
+        assertEq(L.pointsForLevel(12, true), 65);
+      });
+
+      test('pointsForLevel com erros nivel 12 = 33 (ceil(65/2))', () => {
+        assertEq(L.pointsForLevel(12, false), 33);
+      });
+
+      test('pointsForLevel à 1.ª nivel 5 = 30', () => {
+        assertEq(L.pointsForLevel(5, true), 30);
+      });
+
+      test('pointsForLevel cap em 12 mesmo se input maior', () => {
+        assertEq(L.pointsForLevel(99, true), L.pointsForLevel(12, true));
+      });
+
+      test('pointsForLevel min em 1 mesmo se input menor', () => {
+        assertEq(L.pointsForLevel(0, true), L.pointsForLevel(1, true));
+      });
+
+      test('pointsForLevel arredonda level fraccionário', () => {
+        assertEq(L.pointsForLevel(3.7, true), L.pointsForLevel(3, true));
+      });
+
+      test('nextLevelInRamp acumula hits sem subir', () => {
+        const r = L.nextLevelInRamp(1, 2);
+        assertEq(r.level, 1);
+        assertEq(r.hitsAtLevel, 3);
+        assertEq(r.leveledUp, false);
+      });
+
+      test('nextLevelInRamp sobe ao 5.º hit', () => {
+        const r = L.nextLevelInRamp(1, 4);
+        assertEq(r.level, 2);
+        assertEq(r.hitsAtLevel, 0);
+        assertEq(r.leveledUp, true);
+      });
+
+      test('nextLevelInRamp do nível 11 para 12 sobe normalmente', () => {
+        const r = L.nextLevelInRamp(11, 4);
+        assertEq(r.level, 12);
+        assertEq(r.leveledUp, true);
+      });
+
+      test('nextLevelInRamp não passa de 12 mesmo com 5 hits', () => {
+        const r = L.nextLevelInRamp(12, 4);
+        assertEq(r.level, 12);
+        assertEq(r.hitsAtLevel, 5);
+        assertEq(r.leveledUp, false);
+      });
+
+      test('nextLevelInRamp com level inválido (0) cai para 1', () => {
+        const r = L.nextLevelInRamp(0, 0);
+        assertEq(r.level, 1);
+      });
+
+      test('nextLevelInRamp com hits negativo cai para 0', () => {
+        const r = L.nextLevelInRamp(1, -3);
+        assertEq(r.hitsAtLevel, 1);
       });
       // END-TESTS
 

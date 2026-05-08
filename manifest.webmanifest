@@ -1,7 +1,7 @@
 {
-  "name": "Contas Em Pé",
-  "short_name": "Contas",
-  "description": "Jogo pedagógico de soma com transporte para crianças.",
+  "name": "Contas em Pé",
+  "short_name": "Contas em Pé",
+  "description": "Jogo de somas com transporte para crianças do 2.º ano. Funciona offline, sem anúncios, sem registo.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

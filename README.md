@@ -1,64 +1,128 @@
-# Contas Em Pé
+# Contas em Pé
 
-Jogo pedagógico de soma com transporte para crianças do 2.º ano (7-8 anos).
+Um jogo de somas para ajudar crianças do 2.º ano a praticar contas
+com transporte. Joga-se no tablet, sem internet, sem anúncios.
 
-A app apresenta a conta "em pé" — em colunas de unidades, dezenas, centenas — e a criança preenche os transportes e o resultado, com feedback positivo a cada passo.
+🦉 — *com a coruja como guia*
 
-> **Joga online:** [https://apbrito.github.io/contas-em-pe/](https://apbrito.github.io/contas-em-pe/)
+## O que é
 
-## Características
+Os miúdos do 2.º ano aprendem somas com transporte na escola. É a
+altura em que perceber "vai 1" deixa de ser misterioso. Esta app
+treina exactamente isso, coluna a coluna, com 12 níveis de
+dificuldade crescente (de 2 a 4 dígitos, 2 a 4 parcelas).
 
-- **12 níveis progressivos** — de somas a dois algarismos sem transporte até quatro algarismos com várias parcelas.
-- **Dois modos por nível** — coluna a coluna (com transportes visíveis) ou só o resultado final.
-- **Mensagens nunca punitivas** — pistas suaves a cada erro, com revelação ao 3.º para destravar.
-- **Pontos acumulativos** — +10 à 1.ª tentativa, +5 com erros. Nunca desconta.
-- **Mascote coruja** — reage a acertos e erros sem julgar.
-- **Funciona offline** — instalável como PWA no telemóvel ou tablet (Android/iOS) e em PC.
-- **Sem login, sem tracking** — todo o progresso fica em `localStorage` no dispositivo.
+A coruja acompanha. Quando a criança erra, a coruja não a repreende
+— sugere uma dica suave, depois mais específica, e só revela a
+resposta se for mesmo preciso. Linguagem positiva, sem "ERRADO!"
+nem "FALHASTE!".
 
-## Como instalar no tablet ou telemóvel
+Foi feita por um pai para o filho. Está pública para quem quiser
+usar com os seus.
 
-1. Abrir [https://apbrito.github.io/contas-em-pe/](https://apbrito.github.io/contas-em-pe/) no Chrome (Android) ou Safari (iOS).
-2. Esperar a página carregar uma vez (a app fica em cache para uso offline).
-3. Menu do browser → **"Adicionar ao ecrã principal"** ou **"Instalar app"**.
-4. Abrir o atalho criado — passa a comportar-se como uma app nativa.
+## Como instalar no tablet
 
-## Stack
+1. **Abre o link** [https://apbrito.github.io/contas-em-pe/](https://apbrito.github.io/contas-em-pe/)
+   no Chrome (Android) ou Safari (iPad).
+2. **Adiciona ao ecrã principal**:
+   - Android (Chrome): toca no menu (três pontos) → "Adicionar ao
+     ecrã principal".
+   - iPad (Safari): toca no botão Partilhar → "Adicionar ao Ecrã
+     Principal".
+3. **Aparece o ícone da Coruja** no ecrã do tablet. A partir daí,
+   toca para abrir como uma app normal.
+4. **Funciona offline** depois disto. A primeira abertura precisa
+   de internet (descarrega a app); depois funciona sem rede.
 
-App standalone sem build:
+## Como funciona o jogo
 
-- HTML + React 18 (via CDN)
-- Tailwind CSS (via CDN)
-- Babel inline para JSX
-- Service Worker para offline-first
+- **Modo Aprender**: a criança sobe níveis ao seu ritmo. Sobe quando
+  acerta 5 seguidas à 1.ª, ou quando faz 50 pontos. O painel da
+  engrenagem ⚙ deixa pais ajustar o nível para baixo (mas só sobe
+  com prova de jogo).
+- **Modo Contra-relógio**: 10 minutos para fazer o máximo de pontos.
+  Os exercícios sobem de dificuldade automaticamente. Vários
+  jogadores no mesmo tablet — cada um com o seu cartão (nome +
+  animal). Os melhores pontuações ficam no **Mural dos Campeões**.
 
-## Estrutura
+## Privacidade — dados ficam no tablet
 
-```
-index.html              # UI principal
-logic.js                # lógica pura (níveis, geração, validação, persistência)
-tests.html              # suite de testes no browser
-manifest.webmanifest    # manifesto PWA
-service-worker.js       # cache offline
-icons/                  # ícones PWA (SVG + PNG)
-tools/                  # utilitários de desenvolvimento
-```
+Esta app foi feita por um pai, para o seu filho. Por isso é honesta:
 
-## Correr localmente
+- **Não sai nada do tablet.** Nomes, pontos, níveis, Mural — tudo
+  fica guardado **só** no browser/tablet onde a app está instalada.
+- **Sem contas, sem registo, sem email.** A criança não cria conta
+  para usar a app.
+- **Sem anúncios. Sem analytics. Sem tracking.** Nunca terá.
+- **Funciona offline.** Depois da primeira abertura, a app não
+  precisa de internet — nem para jogar, nem para mais nada.
+- **Para apagar tudo**: desinstala a app do tablet. Tudo desaparece
+  com ela.
+- **Não recolhemos dados sobre crianças.** Nem queríamos saber como
+  o teu filho está a jogar — esse é assunto entre vocês.
 
-Não há dependências. Basta servir os ficheiros estáticos:
+A app é open source. Se quiseres verificar com os teus próprios olhos,
+todo o código está aqui no GitHub.
+
+## Atualizações automáticas
+
+Quando há uma nova versão, a app mostra um banner *"Nova versão
+disponível ✨ [Atualizar]"* no fundo do ecrã. Tocar instala. Tudo o
+que a criança já fez (níveis desbloqueados, pontos, Mural) é
+preservado.
+
+Para forçar verificação: dentro da app, toca na engrenagem ⚙ →
+"Procurar atualizações".
+
+Histórico de versões: ver [CHANGELOG.md](CHANGELOG.md).
+
+## FAQ
+
+**Funciona no iPad?** Sim, em Safari como PWA.
+
+**A criança precisa de saber escrever?** Apenas o seu nome no início
+(1-12 letras). Nada mais durante o jogo.
+
+**Há som?** Não na versão actual. Está planeado para uma próxima
+(opcional, com toggle no painel parental).
+
+**Pode jogar sem internet?** Sim, depois da primeira abertura.
+
+**Como removo um perfil?** Engrenagem ⚙ → "Eliminar perfil".
+
+**A criança subiu de nível e ficou frustrada — como volto atrás?**
+Engrenagem ⚙ → desliza o nível para baixo. Pode descer livremente.
+
+**Como reportar um bug?** Abre uma issue em
+[GitHub Issues](https://github.com/apbrito/contas-em-pe/issues).
+
+## Origem
+
+Feita por um pai para o filho, do 2.º ano. A turma do filho está a
+escolher um nome para a coruja — quando decidirem, a coruja
+apresenta-se. 🦉
+
+Aberto a quem queira usar nas turmas dos seus filhos.
+
+## Para devs
+
+App standalone — HTML + React 18 (CDN) + Tailwind (CDN) + Babel
+inline para JSX. Sem build, sem dependências. Lógica pura em
+`logic.js` (testável em Node ou no browser).
+
+Para correr localmente:
 
 ```bash
 python -m http.server 8000
 # abrir http://localhost:8000/
 ```
 
-Para testar o service worker / instalação PWA é preciso HTTPS. Em rede local podes usar `tools/serve_https.py` (gera certificado self-signed) — depois aceitar o aviso de certificado no dispositivo.
+Testes: abrir `tests.html` no browser. Cobre geração de exercícios,
+validação por slot, persistência em `localStorage` (incluindo
+migrações de schema), sistema de pontos, multi-perfil, leaderboard.
 
-## Testes
+Licença: [MIT](LICENSE).
 
-Abrir `tests.html` no browser. Mostra pass/fail de todas as funções da lógica.
+---
 
-## Licença
-
-MIT — ver [LICENSE](LICENSE).
+Feito com ♥ para os miúdos do 2.º ano.

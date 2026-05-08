@@ -40,6 +40,14 @@
       --hint: #e8a05c;
       --error: #c47474;
       --magic-gold: #d4a017;
+      /* Banca da feira (F2-F5) */
+      --paper-bg-warm: #fdf0d5;
+      --paper-cream: #fffbef;
+      --burgundy: #800020;
+      --bronze: #b8860b;
+      --gold-bright: #d4a017;
+      --ink-warm: #5e4017;
+      --sage: #87a96b;
     }
 
     * { box-sizing: border-box; }
@@ -243,6 +251,156 @@
       transform: rotate(-0.2deg);
     }
     .row-divider-soft.tilt-h-b { transform: rotate(0.25deg); }
+
+    .update-banner {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--paper-bg, #fdf6e3);
+      border: 2px solid var(--magic-gold, #d4a017);
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: 'Caveat', cursive;
+      font-size: 18px;
+      color: var(--ink-primary, #5a3a18);
+      z-index: 1000;
+      max-width: 90vw;
+    }
+    .update-banner button {
+      background: var(--magic-gold, #d4a017);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      cursor: pointer;
+      min-height: 56px;
+    }
+    .update-banner button:active { transform: translateY(1px); }
+
+    .pc-shell {
+      background: var(--paper-bg-warm);
+      padding: 24px 28px;
+      border-radius: 14px;
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .pc-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-top: 16px; }
+    .pc-form { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: 16px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .pc-label { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); margin-bottom: 4px; }
+    .pc-help { font-size: 11px; color: #888; margin-bottom: 6px; }
+    .pc-help.error { color: #b00020; }
+    .pc-input { background: transparent; border: none; border-bottom: 2px dashed var(--bronze); font-family: 'Caveat', cursive; font-size: 28px; color: var(--ink-warm); width: 100%; padding: 4px 0; outline: none; }
+    .pc-ava-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+    .pc-ava { background: var(--paper-bg-warm); border: 2px solid transparent; border-radius: 12px; padding: 8px; text-align: center; font-size: 28px; cursor: pointer; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; min-height: 56px; }
+    .pc-ava.selected { border-color: var(--burgundy); background: #fff5ec; box-shadow: 0 0 0 3px rgba(128,0,32,0.10); transform: scale(1.05); }
+    .pc-preview-sign { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.06) 6px 7px), var(--paper-cream); border: 3px solid var(--bronze); border-radius: 14px; padding: 18px 14px; text-align: center; box-shadow: 4px 6px 0 rgba(0,0,0,0.12); transform: rotate(-2deg); margin: 14px; }
+    .pc-preview-ava { font-size: 56px; }
+    .pc-preview-name { font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink-warm); margin-top: 4px; }
+    .pc-preview-badge { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 14px; padding: 1px 10px; border-radius: 6px; margin-top: 6px; }
+    .pc-btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+    .pc-btn { font-family: 'Caveat', cursive; font-size: 18px; background: var(--burgundy); color: var(--paper-cream); border: 2px solid var(--burgundy); padding: 12px 22px; border-radius: 10px; box-shadow: 2px 3px 0 rgba(128,0,32,0.18); cursor: pointer; min-height: 56px; }
+    .pc-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .pc-btn.ghost { background: var(--paper-cream); color: var(--ink-warm); border-color: var(--bronze); box-shadow: 2px 3px 0 rgba(184,134,11,0.18); }
+
+    .mm-shell {
+      background: radial-gradient(ellipse at 80% 18%, rgba(255,222,160,0.45) 0%, transparent 60%), radial-gradient(ellipse at 12% 82%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm);
+      padding: 24px 28px; border-radius: 14px;
+      max-width: 720px; margin: 0 auto;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08); position: relative;
+    }
+    .mm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .mm-greet { font-family: 'Caveat', cursive; font-size: 28px; color: var(--ink-warm); line-height: 1; }
+    .mm-greet .small { font-size: 13px; color: var(--burgundy); display: block; margin-top: 2px; }
+    .mm-greet a { color: var(--gold-bright); cursor: pointer; text-decoration: underline; margin-left: 4px; }
+    .mm-points { font-family: 'Caveat', cursive; font-size: 22px; color: var(--gold-bright); }
+    .mm-card { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 14px; padding: 14px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .mm-card-title { font-family: 'Caveat', cursive; font-size: 26px; color: var(--ink-warm); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; }
+    .mm-card-modes { display: flex; gap: 10px; }
+    .mm-mode { flex: 1; background: var(--paper-bg-warm); border: 2px solid var(--gold-bright); border-radius: 10px; padding: 14px 12px; text-align: center; cursor: pointer; min-height: 56px; }
+    .mm-mode.tempo { border-color: var(--burgundy); }
+    .mm-mode .ico { font-size: 28px; }
+    .mm-mode .lbl { font-family: 'Caveat', cursive; font-size: 18px; color: var(--ink-warm); }
+    .mm-mode .meta { font-size: 11px; color: #888; }
+    .mm-ghost-btn { background: transparent; border: 1.5px solid var(--bronze); color: var(--ink-warm); padding: 10px 18px; border-radius: 8px; font-family: 'Caveat', cursive; font-size: 16px; cursor: pointer; margin: 12px auto 0; display: block; min-height: 48px; }
+    .mm-gear { background: transparent; border: none; cursor: pointer; font-size: 22px; padding: 4px 8px; min-height: 44px; }
+    .ta-shell { max-width: 900px; margin: 0 auto; padding: 16px; }
+    .ta-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+    .ta-header .left { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+    .ta-name { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); }
+    .ta-level { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); }
+    .ta-points { font-family: 'Caveat', cursive; font-size: 22px; color: var(--gold-bright); }
+    .ta-time { font-family: 'Caveat', cursive; font-size: 36px; color: var(--burgundy); line-height: 1; min-width: 100px; text-align: right; }
+    .ta-time.warn { color: #c84020; }
+    .ta-time.crit { color: #b00020; animation: pulse-soft 1s infinite; }
+
+    /* EndScreen */
+    .es-shell { max-width: 920px; margin: 0 auto; padding: 24px 26px 20px; background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.30) 0%, transparent 60%), radial-gradient(ellipse at 30% 95%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
+    .es-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; align-items: center; }
+    @media (max-width: 700px) { .es-grid { grid-template-columns: 1fr; } }
+    .es-left { text-align: center; }
+    .es-pts-big { font-family: 'Caveat', cursive; font-size: 110px; color: var(--burgundy); line-height: 0.95; letter-spacing: -2px; }
+    .es-pts-big .star { color: var(--gold-bright); font-size: 70px; vertical-align: super; }
+    .es-place-big { font-family: 'Caveat', cursive; font-size: 36px; color: var(--ink-warm); margin-top: 2px; }
+    .es-msg-big { font-family: 'Caveat', cursive; font-size: 24px; color: var(--ink-warm); background: var(--paper-cream); border: 2px dashed var(--bronze); border-radius: 14px; padding: 10px 16px; margin: 10px auto 0; line-height: 1.2; transform: rotate(-1deg); box-shadow: 2px 3px 0 rgba(184,134,11,0.18); display: inline-block; max-width: 90%; }
+    .es-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .es-stat { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: 6px 4px; text-align: center; }
+    .es-stat .v { font-family: 'Caveat', cursive; font-size: 22px; color: var(--burgundy); line-height: 1; }
+    .es-stat .l { font-size: 10px; color: var(--ink-warm); }
+    .es-mini-podium { background: var(--paper-cream); border: 2px solid var(--bronze); border-radius: 12px; padding: 10px; box-shadow: 2px 3px 0 rgba(0,0,0,0.10); }
+    .es-mini-title { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); text-align: center; line-height: 1; margin-bottom: 6px; }
+    .es-mini-row { display: grid; grid-template-columns: 22px 22px 1fr auto; gap: 6px; align-items: center; padding: 3px 6px; border-radius: 6px; font-size: 12px; color: var(--ink-warm); }
+    .es-mini-row.me { background: rgba(212,160,23,0.18); }
+    .es-mini-row .pos { font-family: 'Caveat', cursive; font-size: 16px; color: var(--burgundy); }
+    .es-mini-row .nm { font-family: 'Caveat', cursive; font-size: 16px; }
+    .es-mini-row .pts { font-family: 'Caveat', cursive; font-size: 16px; color: var(--gold-bright); }
+    .es-confetti span {
+      position: absolute; width: 8px; height: 10px;
+      pointer-events: none;
+      animation: confetti-fall 5s ease-in forwards;
+    }
+    .es-btn { font-family: 'Caveat', cursive; font-size: 18px; padding: 12px 22px; border-radius: 10px; cursor: pointer; min-height: 56px; }
+    .es-btn.primary { background: var(--burgundy); color: var(--paper-cream); border: 2px solid var(--burgundy); box-shadow: 2px 3px 0 rgba(128,0,32,0.18); }
+    .es-btn.ghost { background: transparent; color: var(--ink-warm); border: 1.5px solid var(--bronze); }
+
+    .lb-shell { max-width: 760px; margin: 0 auto; padding: 24px 28px 18px; background: radial-gradient(ellipse at 50% 0%, rgba(212,160,23,0.18) 0%, transparent 60%), radial-gradient(ellipse at 12% 82%, rgba(128,0,32,0.10) 0%, transparent 55%), var(--paper-bg-warm); border-radius: 14px; position: relative; }
+    .lb-title { font-family: 'Caveat', cursive; font-size: 38px; color: var(--burgundy); line-height: 1; text-shadow: 2px 2px 0 rgba(212,160,23,0.35); text-align: center; }
+    .lb-sub { font-family: 'Caveat', cursive; font-size: 16px; color: var(--ink-warm); text-align: center; margin-top: 2px; }
+    .lb-ribbon { display: inline-block; background: var(--gold-bright); color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 13px; padding: 1px 14px; border-radius: 4px; position: relative; margin-top: 6px; }
+    .lb-ribbon::before, .lb-ribbon::after { content: ""; position: absolute; top: 0; bottom: 0; width: 8px; background: var(--gold-bright); }
+    .lb-ribbon::before { left: -7px; clip-path: polygon(100% 0, 100% 100%, 0 50%); }
+    .lb-ribbon::after { right: -7px; clip-path: polygon(0 0, 0 100%, 100% 50%); }
+    .lb-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; align-items: end; margin: 12px 0; padding: 0 8px; }
+    .lb-step { text-align: center; position: relative; }
+    .lb-step .ava { font-size: 38px; line-height: 1; }
+    .lb-step .nm { font-family: 'Caveat', cursive; font-size: 20px; color: var(--ink-warm); }
+    .lb-step .pts { font-family: 'Caveat', cursive; font-size: 16px; color: var(--burgundy); }
+    .lb-step .base { margin-top: 4px; color: var(--paper-cream); font-family: 'Caveat', cursive; font-size: 30px; border-radius: 8px 8px 0 0; padding: 4px 0 6px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.18); }
+    .lb-step.first .base { height: 60px; background: linear-gradient(180deg, #ffd24a, var(--gold-bright)); color: var(--ink-warm); }
+    .lb-step.first .ava { font-size: 48px; }
+    .lb-step.second .base { height: 44px; background: linear-gradient(180deg, #d8d8d8, #a8a8a8); color: #3a3a3a; }
+    .lb-step.third .base { height: 32px; background: linear-gradient(180deg, #d99066, #a05a30); }
+    .lb-medal { position: absolute; top: -6px; right: 18%; font-size: 22px; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.18)); }
+    .lb-list { background: var(--paper-cream); border: 1.5px solid var(--bronze); border-radius: 10px; padding: 6px 8px; margin-top: 8px; }
+    .lb-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; padding: 4px 6px; font-size: 13px; color: var(--ink-warm); border-bottom: 1px dashed rgba(184,134,11,0.3); }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-row .pos { font-family: 'Caveat', cursive; font-size: 18px; color: var(--burgundy); text-align: center; }
+    .lb-row .who { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .lb-row .ava-emoji { font-size: 18px; }
+    .lb-row .nm { font-family: 'Caveat', cursive; font-size: 16px; }
+    .lb-row .date { font-size: 10px; color: #888; }
+    .lb-row .pts { font-family: 'Caveat', cursive; font-size: 18px; color: var(--gold-bright); }
+    .lb-row.me { background: linear-gradient(90deg, rgba(212,160,23,0.15), rgba(128,0,32,0.08)); border-radius: 6px; box-shadow: inset 2px 0 0 var(--burgundy); }
+    .lb-empty { text-align: center; padding: 24px; color: #888; font-family: 'Caveat', cursive; font-size: 18px; }
+    .lb-btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -252,6 +410,7 @@
     const { useState, useEffect, useRef, useReducer, useCallback, useMemo } = React;
 
     const { LEVELS, generateExercise, validateSlot, loadState, saveState, resetState, computeColumnSums, computePointsForExercise } = window.ContasLogic;
+    const { getActiveProfile, createProfile, setActiveProfile, listProfiles, getLeaderboard, MAX_PROFILES } = window.ContasLogic;
 
     function isCarryNeededForCol(expected, col) {
       return expected.carries[col] > 0;
@@ -293,6 +452,28 @@
         kind: 'specific',
         text: `Soma outra vez: ${colDigits.join(' + ')}${carryStr} dá quanto?`,
       };
+    }
+
+    function Mascot({ state = 'idle', size = 52, name = null, bubble = null, perched = false }) {
+      const stateClass = `mascot-${state}`;
+      const style = { fontSize: size, lineHeight: 1, filter: 'drop-shadow(0 4px 0 rgba(0,0,0,0.10))' };
+      return (
+        <span className={`mascot-wrap ${stateClass}`} style={{ position: 'relative', display: 'inline-block', textAlign: 'center' }}>
+          <span style={style} role="img" aria-label={name || 'coruja'}>🦉</span>
+          {perched && <div style={{ height: 4, width: Math.max(40, size * 0.8), background: 'var(--ink-warm)', borderRadius: 2, margin: '4px auto 0' }}></div>}
+          {bubble && (
+            <div style={{
+              position: 'absolute', top: -54, right: -28,
+              background: 'var(--paper-cream)', border: '2px solid var(--burgundy)', borderRadius: 14,
+              padding: '6px 14px', fontFamily: 'Caveat, cursive', fontSize: 22,
+              color: 'var(--burgundy)', transform: 'rotate(2deg)',
+              boxShadow: '2px 3px 0 rgba(128,0,32,0.18)', whiteSpace: 'nowrap',
+            }}>
+              {bubble}
+            </div>
+          )}
+        </span>
+      );
     }
 
     function Mascote({ state }) {
@@ -747,15 +928,23 @@
       );
     }
 
-    function LevelUpModal({ open, nextLevel, onAccept, onDecline }) {
+    function LevelUpModal({ open, nextLevel, reason = 'streak', onAccept, onDecline }) {
       if (!open) return null;
+
+      const title = reason === 'points'
+        ? 'Já fizeste muitos pontos!'
+        : 'Acertaste 5 seguidas!';
+      const subtitle = reason === 'points'
+        ? 'Queres tentar mais difícil?'
+        : 'Pronto para um nível novo?';
+
       return (
         <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, background: 'rgba(42, 62, 92, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <div className="paper-card p-8 flex flex-col items-center gap-4" style={{ minWidth: 340, maxWidth: 500, background: '#fffef5' }}>
             <div style={{ fontSize: 80 }}>🦉🎉</div>
-            <h2 className="handwritten text-4xl m-0 text-center" style={{ color: 'var(--ink-primary)' }}>Acertaste 5 seguidas!</h2>
+            <h2 className="handwritten text-4xl m-0 text-center" style={{ color: 'var(--ink-primary)' }}>{title}</h2>
             <p className="handwritten text-2xl m-0 text-center" style={{ color: 'var(--ink-secondary)' }}>
-              Estás pronto para o Nível {nextLevel}?
+              {subtitle}
             </p>
             <div className="flex gap-3 mt-2">
               <button onClick={onAccept} className="paper-button px-6 py-3 text-2xl" style={{ background: 'var(--success)', color: 'white' }}>Sim! ✨</button>
@@ -766,9 +955,31 @@
       );
     }
 
-    function ParentalPanel({ open, level, onSetLevel, onReset, onClose }) {
+    function ParentalPanel({ open, level, maxLevel = 12, onSetLevel, onClose, onSwitchProfile, onDeleteProfile }) {
       if (!open) return null;
-      const [confirmReset, setConfirmReset] = useState(false);
+
+      const [updateCheckState, setUpdateCheckState] = useState('idle'); // idle|checking|found|up-to-date|error|no-sw
+
+      async function handleCheckForUpdates() {
+        setUpdateCheckState('checking');
+        const reg = window.__matAppRegistration;
+        if (!reg) { setUpdateCheckState('no-sw'); return; }
+        try {
+          await reg.update();
+          setTimeout(() => setUpdateCheckState(waitingSW ? 'found' : 'up-to-date'), 1500);
+        } catch {
+          setUpdateCheckState('error');
+        }
+      }
+
+      const updateMessage = {
+        idle: '',
+        checking: 'A procurar...',
+        found: 'Nova versão encontrada! Recarrega.',
+        'up-to-date': 'Já tens a versão mais recente ✨',
+        error: 'Erro a verificar.',
+        'no-sw': 'Service Worker não disponível.',
+      }[updateCheckState];
 
       return (
         <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, background: 'rgba(42, 62, 92, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }} onClick={onClose}>
@@ -782,24 +993,51 @@
               <label className="block text-sm mb-2" style={{ color: 'var(--ink-secondary)' }}>Nível actual</label>
               <div className="flex items-center gap-2">
                 <button onClick={() => onSetLevel(Math.max(1, level - 1))} className="paper-button px-3 py-2 text-2xl" disabled={level <= 1}>−</button>
-                <div className="paper-card flex items-center justify-center px-4 py-2 handwritten text-3xl" style={{ minWidth: 80 }}>{level} / 12</div>
-                <button onClick={() => onSetLevel(Math.min(12, level + 1))} className="paper-button px-3 py-2 text-2xl" disabled={level >= 12}>+</button>
+                <div className="paper-card flex items-center justify-center px-4 py-2 handwritten text-3xl" style={{ minWidth: 80 }}>{level} / {maxLevel}</div>
+                <button onClick={() => onSetLevel(Math.min(maxLevel, level + 1))} className="paper-button px-3 py-2 text-2xl" disabled={level >= maxLevel || maxLevel <= 1}>+</button>
+              </div>
+              <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
+                {maxLevel <= 1
+                  ? 'Joga para desbloqueares mais níveis.'
+                  : `Pode descer até 1; só pode subir até nível ${maxLevel} (já desbloqueado).`}
               </div>
             </div>
 
             <hr style={{ border: 'none', borderTop: '1px dashed var(--ink-secondary)', margin: '8px 0' }} />
 
-            {!confirmReset ? (
-              <button onClick={() => setConfirmReset(true)} className="paper-button px-4 py-2" style={{ color: 'var(--error)' }}>Reset progresso</button>
-            ) : (
-              <div className="flex flex-col gap-2 paper-card p-3" style={{ background: '#fadcdc' }}>
-                <p className="m-0 text-sm" style={{ color: 'var(--error)' }}>Apagar todo o progresso da criança? Não há volta atrás.</p>
-                <div className="flex gap-2">
-                  <button onClick={() => { onReset(); setConfirmReset(false); onClose(); }} className="paper-button px-4 py-2" style={{ background: 'var(--error)', color: 'white' }}>Sim, apagar</button>
-                  <button onClick={() => setConfirmReset(false)} className="paper-button px-4 py-2">Cancelar</button>
-                </div>
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px dashed #ccc', display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+              {onSwitchProfile && (
+                <button
+                  onClick={() => onSwitchProfile()}
+                  style={{ background: 'transparent', border: '1px solid var(--magic-gold)', color: 'var(--ink-primary)',
+                           padding: '12px 18px', borderRadius: 10, fontFamily: 'Caveat, cursive',
+                           fontSize: 18, cursor: 'pointer', minHeight: 56 }}
+                >Trocar perfil</button>
+              )}
+              {onDeleteProfile && (
+                <button
+                  onClick={() => onDeleteProfile()}
+                  style={{ background: 'transparent', border: '1px solid #b00020', color: '#b00020',
+                           padding: '12px 18px', borderRadius: 10, fontFamily: 'Caveat, cursive',
+                           fontSize: 18, cursor: 'pointer', minHeight: 56 }}
+                >Eliminar perfil</button>
+              )}
+            </div>
+
+            <div style={{ marginTop: 24, paddingTop: 12, borderTop: '1px dashed #ccc', fontSize: 13 }}>
+              <button
+                onClick={handleCheckForUpdates}
+                style={{ background: 'transparent', border: '1px solid var(--magic-gold)', color: 'var(--ink-primary)',
+                         padding: '12px 18px', borderRadius: 10, fontFamily: 'Caveat, cursive',
+                         fontSize: 18, cursor: 'pointer', minHeight: 56 }}
+              >
+                Procurar atualizações
+              </button>
+              {updateMessage && <span style={{ marginLeft: 10, color: '#666' }}>{updateMessage}</span>}
+              <div style={{ marginTop: 8, color: '#888', fontSize: 11 }}>
+                Versão {ContasLogic.APP_VERSION}
               </div>
-            )}
+            </div>
           </div>
         </div>
       );
@@ -818,8 +1056,210 @@
       );
     }
 
-    function App() {
-      const [persisted, setPersisted] = useState(() => loadState());
+    function UpdateBanner({ currentScreen }) {
+      const [show, setShow] = useState(false);
+      useEffect(() => {
+        updateBannerCallback = setShow;
+        return () => { updateBannerCallback = null; };
+      }, []);
+      if (!show) return null;
+      if (currentScreen === 'time-attack-game') return null;
+      return (
+        <div className="update-banner">
+          <span>✨ Nova versão disponível!</span>
+          <button onClick={() => window.location.reload()}>Atualizar</button>
+        </div>
+      );
+    }
+
+    function ProfileCreate({ existingNames, onCreate, onCancel, profileLimitReached, title = 'Vamos criar-te um cartão!' }) {
+      const [name, setName] = useState('');
+      const [avatar, setAvatar] = useState(ContasLogic.AVATAR_OPTIONS[0]);
+      const validation = ContasLogic.validateProfileName(name, existingNames || []);
+      const reasonText = {
+        empty: '',
+        'too-long': 'Demasiado longo (máximo 12 letras).',
+        'invalid-chars': 'Só letras e espaço — sem números nem símbolos.',
+        duplicate: 'Já existe um perfil com este nome.',
+      };
+      const errorMsg = !validation.ok && name.trim().length > 0 ? reasonText[validation.reason] : '';
+      const canSubmit = validation.ok && !profileLimitReached;
+      return (
+        <div className="pc-shell">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+            <div>
+              <div style={{ fontFamily: 'Caveat, cursive', fontSize: 28, color: 'var(--ink-warm)', lineHeight: 1 }}>
+                {title}
+              </div>
+              <div style={{ fontFamily: 'Caveat, cursive', fontSize: 14, color: 'var(--burgundy)', marginTop: 3 }}>
+                Escolhe o teu nome e o teu animal
+              </div>
+            </div>
+            <Mascot size={52} perched={true} />
+          </div>
+          <div className="pc-grid">
+            <div className="pc-form">
+              <div className="pc-label">Como te chamas?</div>
+              <input
+                className="pc-input"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                maxLength={12}
+                autoFocus
+              />
+              <div className={`pc-help ${errorMsg ? 'error' : ''}`}>
+                {errorMsg || 'Até 12 letras · só letras e espaço'}
+              </div>
+              <div className="pc-label" style={{ marginTop: 14 }}>O teu animal</div>
+              <div className="pc-help">Escolhe um. Podes mudar depois.</div>
+              <div className="pc-ava-grid">
+                {ContasLogic.AVATAR_OPTIONS.map(a => (
+                  <div
+                    key={a}
+                    className={`pc-ava ${a === avatar ? 'selected' : ''}`}
+                    onClick={() => setAvatar(a)}
+                    role="button"
+                    aria-label={`Escolher avatar ${a}`}
+                  >{a}</div>
+                ))}
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'Caveat, cursive', fontSize: 18, color: 'var(--burgundy)', marginBottom: 8 }}>~ O teu cartão ~</div>
+              <div className="pc-preview-sign">
+                <div className="pc-preview-ava">{avatar}</div>
+                <div className="pc-preview-name">{name.trim() || '...'}</div>
+                <div className="pc-preview-badge">Novo!</div>
+              </div>
+              <div style={{ fontSize: 18, color: 'var(--gold-bright)', letterSpacing: 6, marginTop: 4 }}>✦ · ✧ · ✦</div>
+            </div>
+          </div>
+          {profileLimitReached && (
+            <div className="pc-help error" style={{ textAlign: 'center', marginTop: 8 }}>
+              Não cabem mais perfis. Elimina um existente para criar outro.
+            </div>
+          )}
+          <div className="pc-btn-row">
+            {onCancel && <button className="pc-btn ghost" onClick={onCancel}>Cancelar</button>}
+            <button
+              className="pc-btn"
+              disabled={!canSubmit}
+              onClick={() => canSubmit && onCreate(name.trim(), avatar)}
+            >Pronto!</button>
+          </div>
+        </div>
+      );
+    }
+
+    function MainMenu({ profile, bestTime, onLearn, onTimeAttack, onSeeMural, onSwitchProfile, onOpenParental }) {
+      return (
+        <div className="mm-shell">
+          <div className="mm-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Mascot size={52} />
+              <div className="mm-greet">
+                Olá, {profile.name}!
+                <span className="small">
+                  Pronto para jogar?
+                  <a onClick={onSwitchProfile} role="button">trocar</a>
+                  <button className="mm-gear" onClick={onOpenParental} aria-label="Painel parental">⚙</button>
+                </span>
+              </div>
+            </div>
+            <div className="mm-points">{profile.somas.points} ✨</div>
+          </div>
+          <div className="mm-card">
+            <div className="mm-card-title">
+              <span>➕ Somas</span>
+              <span style={{ fontSize: 12, color: '#888' }}>Nível {profile.somas.level}</span>
+            </div>
+            <div className="mm-card-modes">
+              <div className="mm-mode" onClick={onLearn} role="button" aria-label="Modo Aprender">
+                <div className="ico">📖</div>
+                <div className="lbl">Aprender</div>
+                <div className="meta">Ao teu ritmo</div>
+              </div>
+              <div className="mm-mode tempo" onClick={onTimeAttack} role="button" aria-label="Modo Contra-relógio">
+                <div className="ico">⏱️</div>
+                <div className="lbl">Contra-relógio</div>
+                <div className="meta">{bestTime ? `Melhor: ${bestTime} pts` : '10 min · com amigos'}</div>
+              </div>
+            </div>
+          </div>
+          <button className="mm-ghost-btn" onClick={onSeeMural}>🏆 Ver Mural dos Campeões</button>
+        </div>
+      );
+    }
+
+    function TimeAttackLobby({ profiles, leaderboard, onSelectProfile, onCreateNew, onSeeMural, onBack }) {
+      const bestByName = {};
+      (leaderboard || []).forEach(e => {
+        const k = e.profileName.toLowerCase();
+        if (!(k in bestByName)) bestByName[k] = e.points;
+      });
+      return (
+        <div className="mm-shell" style={{ paddingBottom: 28 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div className="mm-greet">
+              Quem vai jogar?
+              <span className="small">Escolhe o teu perfil ou cria um novo</span>
+            </div>
+            <Mascot size={52} perched={true} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
+            {profiles.map((p, i) => {
+              const best = bestByName[p.name.toLowerCase()];
+              return (
+                <div
+                  key={p.name}
+                  onClick={() => onSelectProfile(p.name)}
+                  role="button"
+                  aria-label={`Jogar como ${p.name}`}
+                  style={{
+                    background: 'repeating-linear-gradient(45deg, transparent 0 6px, rgba(184,134,11,0.05) 6px 7px), var(--paper-cream)',
+                    border: '2px solid var(--bronze)', borderRadius: 12, padding: '10px 6px',
+                    textAlign: 'center', boxShadow: '2px 3px 0 rgba(0,0,0,0.10)',
+                    transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)`, cursor: 'pointer',
+                    minHeight: 110,
+                  }}
+                >
+                  <div style={{ fontSize: 32 }}>{p.avatar}</div>
+                  <div style={{ fontFamily: 'Caveat, cursive', fontSize: 20, color: 'var(--ink-warm)' }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--burgundy)' }}>
+                    {best ? `Melhor: ${best} pts` : '— sem records —'}
+                  </div>
+                </div>
+              );
+            })}
+            <div
+              onClick={onCreateNew}
+              role="button"
+              aria-label="Criar perfil novo"
+              style={{
+                background: 'transparent', border: '2px dashed var(--bronze)', borderRadius: 12,
+                padding: '10px 6px', textAlign: 'center', color: 'var(--bronze)', cursor: 'pointer',
+                fontFamily: 'Caveat, cursive', minHeight: 110,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <div style={{ fontSize: 32 }}>+</div>
+              <div style={{ fontSize: 18 }}>Novo</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 18, flexWrap: 'wrap' }}>
+            <button onClick={onBack}
+              style={{ background: 'transparent', border: '1.5px solid var(--bronze)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', color: 'var(--ink-warm)', minHeight: 56 }}
+            >← Voltar</button>
+            <button onClick={onSeeMural}
+              style={{ background: 'var(--paper-cream)', border: '2px solid var(--burgundy)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, color: 'var(--burgundy)', cursor: 'pointer', boxShadow: '2px 3px 0 rgba(128,0,32,0.18)', minHeight: 56 }}
+            >🏆 Ver Mural</button>
+          </div>
+        </div>
+      );
+    }
+
+    function LearnGame({ profile, onUpdateProfile, onBackToMenu, onSwitchProfile, onDeleteProfile }) {
+      const [persisted, setPersisted] = useState(profile.somas);
       const level = persisted.level;
       const streak = persisted.streak;
       const points = persisted.points;
@@ -839,6 +1279,7 @@
       const [mascoteState, setMascoteState] = useState('idle');
       const [completeModalOpen, setCompleteModalOpen] = useState(false);
       const [levelUpOpen, setLevelUpOpen] = useState(false);
+      const [levelUpReason, setLevelUpReason] = useState('streak');
       const [parentalOpen, setParentalOpen] = useState(false);
 
       function slotKey(type, col) { return `${type}-${col}`; }
@@ -911,19 +1352,34 @@
         const earned = computePointsForExercise(firstTry);
         setMascoteState('celebrating');
         const newStreak = firstTry ? streak + 1 : 0;
+        const newPoints = persisted.points + earned;
+        const newPointsSinceLastUp = (persisted.pointsSinceLastLevelUp || 0) + earned;
         const newPersisted = {
           ...persisted,
           streak: newStreak,
-          points: persisted.points + earned,
+          points: newPoints,
+          pointsSinceLastLevelUp: newPointsSinceLastUp,
           totalAttempts: persisted.totalAttempts + 1,
           totalCorrectFirstTry: persisted.totalCorrectFirstTry + (firstTry ? 1 : 0),
         };
         setPersisted(newPersisted);
-        saveState(newPersisted);
+        onUpdateProfile({ ...profile, somas: newPersisted });
         setPointsBurst(earned);
         setTimeout(() => setPointsBurst(null), 900);
         setCompleteModalOpen(true);
+
+        // Subida natural por streak
         if (newStreak >= 5 && level < 12) {
+          setLevelUpReason('streak');
+          setTimeout(() => {
+            setCompleteModalOpen(false);
+            setLevelUpOpen(true);
+          }, 1500);
+          return;
+        }
+        // Subida por acumulação de pontos (apenas se não disparou já por streak)
+        if (newPointsSinceLastUp >= ContasLogic.POINTS_TO_LEVELUP && level < 12) {
+          setLevelUpReason('points');
           setTimeout(() => {
             setCompleteModalOpen(false);
             setLevelUpOpen(true);
@@ -1108,45 +1564,58 @@
       }
 
       function handleSetLevel(newLevel) {
-        const next = { ...persisted, level: newLevel, streak: 0 };
+        const safe = Math.max(1, Math.min(persisted.maxLevelReached || 1, newLevel));
+        const next = { ...persisted, level: safe, streak: 0 };
         setPersisted(next);
-        saveState(next);
-        startNewExercise(newLevel);
-      }
-
-      function handleResetProgress() {
-        resetState();
-        const fresh = loadState();
-        setPersisted(fresh);
-        startNewExercise(fresh.level);
+        onUpdateProfile({ ...profile, somas: next });
+        startNewExercise(safe);
       }
 
       function handleAcceptLevelUp() {
         const newLevel = Math.min(12, level + 1);
-        const next = { ...persisted, level: newLevel, streak: 0 };
-        setPersisted(next);
-        saveState(next);
+        const newPersisted = {
+          ...persisted,
+          level: newLevel,
+          maxLevelReached: Math.max(persisted.maxLevelReached || 1, newLevel),
+          streak: 0,
+          pointsSinceLastLevelUp: 0,
+        };
+        setPersisted(newPersisted);
+        onUpdateProfile({ ...profile, somas: newPersisted });
         setLevelUpOpen(false);
         startNewExercise(newLevel);
       }
 
       function handleDeclineLevelUp() {
-        const next = { ...persisted, streak: 0 };
-        setPersisted(next);
-        saveState(next);
+        const newPersisted = {
+          ...persisted,
+          streak: 0,
+          pointsSinceLastLevelUp: 0,
+        };
+        setPersisted(newPersisted);
+        onUpdateProfile({ ...profile, somas: newPersisted });
         setLevelUpOpen(false);
         startNewExercise();
       }
 
       return (
         <div className="min-h-screen flex flex-col items-center p-4">
-          <Header
-            level={level}
-            points={points}
-            mascoteState={mascoteState}
-            pointsBurst={pointsBurst}
-            onOpenParental={() => setParentalOpen(true)}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '72rem', marginBottom: 4 }}>
+            <button
+              onClick={onBackToMenu}
+              title="Voltar ao menu"
+              style={{ background: 'transparent', border: '1.5px solid var(--magic-gold)', borderRadius: 8, padding: '8px 14px', fontFamily: 'Caveat, cursive', fontSize: 20, cursor: 'pointer', color: 'var(--ink-primary)', minHeight: 56, marginRight: 8 }}
+            >⌂</button>
+            <div style={{ flex: 1 }}>
+              <Header
+                level={level}
+                points={points}
+                mascoteState={mascoteState}
+                pointsBurst={pointsBurst}
+                onOpenParental={() => setParentalOpen(true)}
+              />
+            </div>
+          </div>
 
           <div className="flex flex-row items-start justify-center gap-8 flex-wrap my-2 w-full max-w-5xl">
             <Tabela
@@ -1171,8 +1640,725 @@
           </div>
 
           <ExerciseCompleteModal open={completeModalOpen} firstTry={!exerciseDirty} pointsEarned={pointsBurst} onNext={handleNext} />
-          <LevelUpModal open={levelUpOpen} nextLevel={level + 1} onAccept={handleAcceptLevelUp} onDecline={handleDeclineLevelUp} />
-          <ParentalPanel open={parentalOpen} level={level} onSetLevel={handleSetLevel} onReset={handleResetProgress} onClose={() => setParentalOpen(false)} />
+          <LevelUpModal open={levelUpOpen} nextLevel={level + 1} reason={levelUpReason} onAccept={handleAcceptLevelUp} onDecline={handleDeclineLevelUp} />
+          <ParentalPanel
+            open={parentalOpen}
+            level={level}
+            maxLevel={persisted.maxLevelReached}
+            onSetLevel={handleSetLevel}
+            onClose={() => setParentalOpen(false)}
+            onSwitchProfile={onSwitchProfile}
+            onDeleteProfile={onDeleteProfile}
+          />
+        </div>
+      );
+    }
+
+    function ExerciseBoard({ taLevel, onCorrect }) {
+      const cfg = ContasLogic.LEVELS[taLevel - 1];
+      const [exercise, setExercise] = useState(() => ContasLogic.generateExercise(cfg));
+      const numCols = exercise.expected.results.length;
+      const [inputs, setInputs] = useState({ results: [], carries: [] });
+      const [slotStates, setSlotStates] = useState({});
+      const [activeSlot, setActiveSlot] = useState({ type: 'result', col: 0 });
+      const [dirty, setDirty] = useState(false);
+      const [mascoteState, setMascoteState] = useState('idle');
+
+      useEffect(() => {
+        const cfg2 = ContasLogic.LEVELS[taLevel - 1];
+        setExercise(ContasLogic.generateExercise(cfg2));
+        setInputs({ results: [], carries: [] });
+        setSlotStates({});
+        setActiveSlot({ type: 'result', col: 0 });
+        setDirty(false);
+        setMascoteState('idle');
+      }, [taLevel]);
+
+      function slotKey(type, col) { return `${type}-${col}`; }
+
+      function writeSlotValue(prev, slot, v) {
+        const next = { results: [...prev.results], carries: [...prev.carries] };
+        if (slot.type === 'result') next.results[slot.col] = v;
+        else next.carries[slot.col] = v;
+        return next;
+      }
+
+      function clearSlot(prev, slot) {
+        const next = { results: [...prev.results], carries: [...prev.carries] };
+        if (slot.type === 'result') next.results[slot.col] = null;
+        else next.carries[slot.col] = null;
+        return next;
+      }
+
+      function handleNumpadPress(v) {
+        if (v === 'erase') {
+          const key = slotKey(activeSlot.type, activeSlot.col);
+          if (slotStates[key] === 'correct') return;
+          setInputs(prev => clearSlot(prev, activeSlot));
+          setSlotStates(prev => ({ ...prev, [key]: 'empty' }));
+          return;
+        }
+
+        const key = slotKey(activeSlot.type, activeSlot.col);
+        if (slotStates[key] === 'correct') return;
+
+        const expectedValue = activeSlot.type === 'result'
+          ? exercise.expected.results[activeSlot.col]
+          : (exercise.expected.carries[activeSlot.col - 1] || 0);
+
+        const result = ContasLogic.validateSlot(v, expectedValue);
+        setInputs(prev => writeSlotValue(prev, activeSlot, v));
+
+        if (result.ok) {
+          const newStates = { ...slotStates, [key]: 'correct' };
+          setSlotStates(newStates);
+          setMascoteState('happy');
+          const next = nextActiveSlotCol(activeSlot, exercise.expected, numCols);
+          if (next) {
+            setTimeout(() => setMascoteState('idle'), 600);
+            setTimeout(() => setActiveSlot(next), 300);
+          } else {
+            const firstTry = !dirty;
+            setTimeout(() => {
+              setMascoteState('idle');
+              onCorrect(firstTry);
+            }, 500);
+          }
+        } else {
+          setSlotStates(prev => ({ ...prev, [key]: 'wrong' }));
+          setMascoteState('worried');
+          setDirty(true);
+          setTimeout(() => {
+            setInputs(prev => clearSlot(prev, activeSlot));
+            setSlotStates(prev => ({ ...prev, [key]: 'empty' }));
+            setMascoteState('idle');
+          }, 500);
+        }
+      }
+
+      function handleSlotClick(type, col) {
+        // No Time Attack (always 'col' mode): slots are auto-advanced; click only
+        // allows revisiting empty/wrong slots.
+        const key = slotKey(type, col);
+        if (slotStates[key] === 'correct') return;
+        setActiveSlot({ type, col });
+      }
+
+      return (
+        <div className="flex flex-row items-start justify-center gap-8 flex-wrap my-2 w-full max-w-5xl">
+          <Tabela
+            exercise={exercise}
+            level={taLevel}
+            inputs={inputs}
+            slotStates={slotStates}
+            activeSlot={activeSlot}
+            onSlotClick={handleSlotClick}
+          />
+          <div className="flex flex-col items-center gap-3">
+            <Mascote state={mascoteState} />
+            <Numpad onPress={handleNumpadPress} disabled={false} />
+          </div>
+        </div>
+      );
+    }
+
+    function TimeAttackGame({ profile, onFinish, onAbort }) {
+      const [timeLeft, setTimeLeft] = useState(ContasLogic.TIME_ATTACK_DURATION_S);
+      const [taLevel, setTaLevel] = useState(1);
+      const [hitsAtLevel, setHitsAtLevel] = useState(0);
+      const [taPoints, setTaPoints] = useState(0);
+      const [taExercises, setTaExercises] = useState(0);
+      const [taFirstTryHits, setTaFirstTryHits] = useState(0);
+      const [taMaxLevel, setTaMaxLevel] = useState(1);
+      const [exerciseKey, setExerciseKey] = useState(0);
+
+      // Use refs for the latest values that the timeout-on-end callback should see.
+      const finishedRef = useRef(false);
+
+      useEffect(() => {
+        if (timeLeft <= 0) {
+          if (!finishedRef.current) {
+            finishedRef.current = true;
+            onFinish({
+              points: taPoints,
+              exercises: taExercises,
+              firstTryHits: taFirstTryHits,
+              maxLevel: taMaxLevel,
+            });
+          }
+          return;
+        }
+        const id = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+        return () => clearTimeout(id);
+      }, [timeLeft]);
+
+      function fmtTime(s) {
+        const m = Math.floor(s / 60);
+        const ss = s % 60;
+        return `${m}:${ss < 10 ? '0' : ''}${ss}`;
+      }
+
+      const timeClass = timeLeft <= 10 ? 'ta-time crit' : (timeLeft <= 30 ? 'ta-time warn' : 'ta-time');
+
+      function handleAbortClick() {
+        if (typeof window !== 'undefined' && window.confirm('Sair? Vais perder os pontos desta partida.')) {
+          finishedRef.current = true;
+          onAbort();
+        }
+      }
+
+      return (
+        <div className="ta-shell">
+          <div className="ta-header">
+            <div className="left">
+              <span className="ta-name">{profile.avatar} {profile.name}</span>
+              <span className="ta-level">Nível {taLevel}</span>
+              <span className="ta-points">{taPoints} ✨</span>
+            </div>
+            <div className={timeClass} aria-label={`Tempo restante: ${fmtTime(timeLeft)}`}>{fmtTime(timeLeft)}</div>
+          </div>
+          <ExerciseBoard
+            key={exerciseKey}
+            taLevel={taLevel}
+            onCorrect={(firstTry) => {
+              setExerciseKey(k => k + 1);
+              const earned = ContasLogic.pointsForLevel(taLevel, firstTry);
+              setTaPoints(p => p + earned);
+              setTaExercises(e => e + 1);
+              if (firstTry) {
+                setTaFirstTryHits(h => h + 1);
+                const ramp = ContasLogic.nextLevelInRamp(taLevel, hitsAtLevel);
+                setTaLevel(ramp.level);
+                setHitsAtLevel(ramp.hitsAtLevel);
+                if (ramp.leveledUp) {
+                  setTaMaxLevel(m => Math.max(m, ramp.level));
+                }
+              }
+            }}
+          />
+          <div style={{ textAlign: 'center', marginTop: 12 }}>
+            <button onClick={handleAbortClick}
+              style={{ background: 'transparent', border: '1px solid var(--bronze)', borderRadius: 8, padding: '8px 14px', fontFamily: 'Caveat, cursive', fontSize: 16, cursor: 'pointer', minHeight: 48, color: 'var(--ink-warm)' }}
+            >Sair</button>
+          </div>
+        </div>
+      );
+    }
+
+    function endScreenMessage({ stats, leaderboard, profileName }) {
+      // Encontrar a entry deste jogador com estes pontos (a recém-inserida)
+      const myCurrent = leaderboard.find(
+        e => e.profileName.toLowerCase() === profileName.toLowerCase()
+          && e.points === stats.points && e.exercises === stats.exercises
+      );
+      const myRank = myCurrent ? leaderboard.indexOf(myCurrent) + 1 : 0;
+      const isFirst = myRank === 1;
+
+      // Recorde pessoal: maior pontuação anterior do mesmo jogador (excluindo a actual)
+      const previousMine = leaderboard
+        .filter(e => e.profileName.toLowerCase() === profileName.toLowerCase() && e !== myCurrent)
+        .map(e => e.points);
+      const previousBest = previousMine.length ? Math.max(...previousMine) : 0;
+      const isNewPersonalRecord = stats.points > previousBest;
+
+      // Empate em pontos
+      const tied = leaderboard.filter(
+        e => e.points === stats.points && e.profileName.toLowerCase() !== profileName.toLowerCase()
+      );
+
+      // Próximo acima
+      const above = leaderboard.find(e => e.points > stats.points);
+
+      if (isFirst && isNewPersonalRecord) return 'Boa! Estás no topo do Mural!';
+      if (isFirst && !isNewPersonalRecord) return '1.º lugar! Já o tinhas feito melhor — agora repete a façanha!';
+      if (isNewPersonalRecord && above) return `Novo recorde pessoal! Estás a ${above.points - stats.points} pts do/a ${above.profileName} — quase!`;
+      if (tied.length > 0) return `Empataste com o/a ${tied[0].profileName}!`;
+      if (leaderboard.length <= 1) return 'Boa, primeiro jogo! Já estás no Mural.';
+      return `Boa, ${stats.points} pontos! Da próxima já vais fazer mais.`;
+    }
+
+    function EndScreen({ profile, stats, leaderboard, onPlayAgain, onBackToMenu, onSeeMural }) {
+      const myCurrentEntry = leaderboard.find(
+        e => e.profileName.toLowerCase() === profile.name.toLowerCase()
+          && e.points === stats.points && e.exercises === stats.exercises
+      );
+      const myRank = myCurrentEntry ? leaderboard.indexOf(myCurrentEntry) + 1 : 0;
+      const placeIcon = myRank === 1 ? '👑' : (myRank === 2 ? '🥈' : (myRank === 3 ? '🥉' : ''));
+      const placeText = myRank > 0 ? `${placeIcon ? placeIcon + ' ' : ''}${myRank}.º lugar` : '— fora do Mural —';
+
+      const msg = endScreenMessage({
+        stats, leaderboard, profileName: profile.name,
+      });
+
+      const top5 = leaderboard.slice(0, 5);
+      const hitRatePct = stats.exercises > 0 ? Math.round(100 * stats.firstTryHits / stats.exercises) : 0;
+
+      const confettiColors = ['var(--gold-bright)', 'var(--burgundy)', 'var(--sage)'];
+      const confettiSpots = [
+        { left: '6%', top: 8, delay: 0 },
+        { left: '22%', top: 14, delay: 0.4 },
+        { left: '34%', top: 6, delay: 0.2, round: true },
+        { left: '70%', top: 22, delay: 0.5 },
+        { right: '8%', top: 12, delay: 0.1, round: true },
+        { left: '50%', top: 28, delay: 0.6 },
+        { left: '14%', bottom: 18, delay: 0.3 },
+        { right: '24%', bottom: 22, delay: 0.45, round: true },
+      ];
+
+      return (
+        <div className="es-shell">
+          <div className="es-confetti">
+            {confettiSpots.map((c, i) => (
+              <span key={i} style={{
+                left: c.left, right: c.right,
+                top: c.top, bottom: c.bottom,
+                background: confettiColors[i % confettiColors.length],
+                borderRadius: c.round ? '50%' : 1,
+                animationDelay: `${c.delay || 0}s`,
+              }}></span>
+            ))}
+          </div>
+          <div className="es-grid">
+            <div className="es-left">
+              <Mascot size={88} state="celebrating" bubble={`Boa, ${profile.name}!`} />
+              <div className="es-pts-big">{stats.points}<span className="star"> ✨</span></div>
+              <div className="es-place-big">{placeText}</div>
+              <div className="es-msg-big">{msg}</div>
+              <div className="es-stats">
+                <div className="es-stat"><div className="v">{stats.exercises}</div><div className="l">exercícios</div></div>
+                <div className="es-stat"><div className="v">{hitRatePct}%</div><div className="l">à 1.ª</div></div>
+                <div className="es-stat"><div className="v">N{stats.maxLevel}</div><div className="l">nível máx</div></div>
+              </div>
+            </div>
+            <div className="es-mini-podium">
+              <div className="es-mini-title">No Mural ficas em…</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {top5.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: '#888', fontSize: 12, padding: 8 }}>(Mural vazio)</div>
+                ) : top5.map((e, i) => {
+                  const isMe = myCurrentEntry && e === myCurrentEntry;
+                  return (
+                    <div key={i} className={`es-mini-row ${isMe ? 'me' : ''}`}>
+                      <span className="pos">{i + 1}</span>
+                      <span style={{ fontSize: 18, textAlign: 'center' }}>{e.avatar}</span>
+                      <span className="nm">{e.profileName}{isMe ? ' (tu)' : ''}</span>
+                      <span className="pts">{e.points} ✨</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ textAlign: 'center', marginTop: 8 }}>
+                <button onClick={onSeeMural} className="es-btn primary"
+                  style={{ fontSize: 14, padding: '8px 14px', minHeight: 48 }}
+                >Ver Mural completo</button>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 14, flexWrap: 'wrap' }}>
+            <button onClick={onPlayAgain} className="es-btn ghost">↺ Jogar outra vez</button>
+            <button onClick={onBackToMenu} className="es-btn primary">🏠 Voltar ao menu</button>
+          </div>
+        </div>
+      );
+    }
+
+    function fmtLBDate(iso) {
+      // ISO YYYY-MM-DD → "DD mmm" pt-PT (curto)
+      if (!iso) return '';
+      const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+      const parts = String(iso).split('-');
+      if (parts.length < 3) return iso;
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const d = parseInt(parts[2], 10);
+      if (!m || !d || m < 1 || m > 12) return iso;
+      return `${d} ${months[m - 1]}`;
+    }
+
+    function LeaderboardPage({ leaderboard, currentProfileName, onBack, onPlay }) {
+      const top3 = leaderboard.slice(0, 3);
+      const rest = leaderboard.slice(3, 10);
+      const hasFullPodium = top3.length >= 3;
+      const isCurrent = (e) => currentProfileName && e.profileName.toLowerCase() === currentProfileName.toLowerCase();
+
+      return (
+        <div className="lb-shell">
+          <div style={{ textAlign: 'center', marginBottom: 10 }}>
+            <div className="lb-title">✦ Mural dos Campeões ✦</div>
+            <div className="lb-sub">Contra-relógio · Somas · 10 minutos</div>
+            <span className="lb-ribbon">Os melhores de sempre</span>
+          </div>
+
+          {hasFullPodium && (
+            <div className="lb-podium">
+              <div className="lb-step second">
+                <div className="lb-medal">🥈</div>
+                <div className="ava">{top3[1].avatar}</div>
+                <div className="nm">{top3[1].profileName}</div>
+                <div className="pts">{top3[1].points} ✨</div>
+                <div className="base">2</div>
+              </div>
+              <div className="lb-step first">
+                <div className="lb-medal">👑</div>
+                <div className="ava">{top3[0].avatar}</div>
+                <div className="nm">{top3[0].profileName}</div>
+                <div className="pts">{top3[0].points} ✨</div>
+                <div className="base">1</div>
+              </div>
+              <div className="lb-step third">
+                <div className="lb-medal">🥉</div>
+                <div className="ava">{top3[2].avatar}</div>
+                <div className="nm">{top3[2].profileName}</div>
+                <div className="pts">{top3[2].points} ✨</div>
+                <div className="base">3</div>
+              </div>
+            </div>
+          )}
+
+          {!hasFullPodium && top3.length > 0 && (
+            <div className="lb-list">
+              {top3.map((e, i) => (
+                <div key={i} className={`lb-row ${isCurrent(e) ? 'me' : ''}`}>
+                  <div className="pos">{i + 1}</div>
+                  <div className="who">
+                    <span className="ava-emoji">{e.avatar}</span>
+                    <span className="nm">{e.profileName}</span>
+                    <span className="date">· {fmtLBDate(e.date)}</span>
+                  </div>
+                  <div className="pts">{e.points} ✨</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {rest.length > 0 && (
+            <div className="lb-list">
+              {rest.map((e, i) => (
+                <div key={i + 3} className={`lb-row ${isCurrent(e) ? 'me' : ''}`}>
+                  <div className="pos">{i + 4}</div>
+                  <div className="who">
+                    <span className="ava-emoji">{e.avatar}</span>
+                    <span className="nm">{e.profileName}</span>
+                    <span className="date">· {fmtLBDate(e.date)}</span>
+                  </div>
+                  <div className="pts">{e.points} ✨</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {leaderboard.length === 0 && (
+            <div className="lb-empty">O Mural está vazio. Sê o/a primeiro/a!</div>
+          )}
+
+          <div className="lb-btn-row">
+            <button onClick={onBack}
+              style={{ background: 'transparent', border: '1.5px solid var(--bronze)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', color: 'var(--ink-warm)', minHeight: 56 }}
+            >← Voltar</button>
+            <button onClick={onPlay}
+              style={{ background: 'var(--burgundy)', color: 'var(--paper-cream)', border: '2px solid var(--burgundy)', padding: '12px 18px', borderRadius: 10, fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', boxShadow: '2px 3px 0 rgba(128,0,32,0.18)', minHeight: 56 }}
+            >⏱ Jogar contra-relógio</button>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const initialState = useRef(loadState()).current;
+      const [appState, setAppState] = useState(initialState);
+      const [currentScreen, setCurrentScreen] = useState(
+        getActiveProfile(initialState) ? 'main-menu' : 'first-profile'
+      );
+      const [lastSessionStats, setLastSessionStats] = useState(null);
+
+      function persistState(newState) {
+        setAppState(newState);
+        saveState(newState);
+      }
+
+      function updateProfile(profile) {
+        const next = {
+          ...appState,
+          profiles: { ...appState.profiles, [profile.name]: profile },
+        };
+        persistState(next);
+      }
+
+      function handleCreateProfile(name, avatar) {
+        const r = createProfile(appState, name, avatar);
+        if (!r.ok) return;
+        persistState(r.state);
+        setCurrentScreen('main-menu');
+      }
+
+      function handleSwitchProfile(targetName) {
+        const r = setActiveProfile(appState, targetName);
+        if (r.ok) persistState(r.state);
+      }
+
+      const activeProfile = getActiveProfile(appState);
+      const existingNames = Object.keys(appState.profiles || {});
+      const profileLimitReached = existingNames.length >= MAX_PROFILES;
+
+      // Defesa: se não há perfis mas estamos noutro ecrã, força first-profile.
+      if (!activeProfile && currentScreen !== 'first-profile' && currentScreen !== 'create-profile') {
+        setCurrentScreen('first-profile');
+        return null;
+      }
+
+      let screen;
+      switch (currentScreen) {
+        case 'first-profile':
+          screen = (
+            <ProfileCreate
+              existingNames={existingNames}
+              onCreate={handleCreateProfile}
+              profileLimitReached={profileLimitReached}
+              title="Olá! Vamos criar o teu cartão"
+            />
+          );
+          break;
+        case 'create-profile':
+          screen = (
+            <ProfileCreate
+              existingNames={existingNames}
+              onCreate={(name, avatar) => {
+                const r = ContasLogic.createProfile(appState, name, avatar);
+                if (!r.ok) return;
+                const switched = { ...r.state, lastProfile: r.profile.name };
+                persistState(switched);
+                setCurrentScreen('main-menu');
+              }}
+              onCancel={() => setCurrentScreen('main-menu')}
+              profileLimitReached={profileLimitReached}
+            />
+          );
+          break;
+        case 'switch-profile': {
+          const profilesList = listProfiles(appState);
+          screen = (
+            <div style={{ maxWidth: 720, margin: '0 auto', padding: 20 }}>
+              <div style={{ fontFamily: 'Caveat, cursive', fontSize: 28, color: 'var(--ink-warm)', textAlign: 'center', marginBottom: 16 }}>
+                Quem vai jogar?
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10 }}>
+                {profilesList.map(p => (
+                  <div
+                    key={p.name}
+                    onClick={() => { handleSwitchProfile(p.name); setCurrentScreen('main-menu'); }}
+                    style={{ background: 'var(--paper-cream)', border: '2px solid var(--bronze)', borderRadius: 12, padding: 12, textAlign: 'center', cursor: 'pointer', boxShadow: '2px 3px 0 rgba(0,0,0,0.10)', minHeight: 96 }}
+                  >
+                    <div style={{ fontSize: 28 }}>{p.avatar}</div>
+                    <div style={{ fontFamily: 'Caveat, cursive', fontSize: 18 }}>{p.name}</div>
+                    <div style={{ fontSize: 11, color: '#888' }}>Nível {p.somas.level}</div>
+                  </div>
+                ))}
+                <div
+                  onClick={() => setCurrentScreen('create-profile')}
+                  style={{ background: 'transparent', border: '2px dashed var(--bronze)', borderRadius: 12, padding: 12, textAlign: 'center', cursor: 'pointer', color: 'var(--bronze)', minHeight: 96 }}
+                  role="button" aria-label="Criar perfil novo"
+                >
+                  <div style={{ fontSize: 28 }}>+</div>
+                  <div style={{ fontFamily: 'Caveat, cursive', fontSize: 16 }}>Criar novo</div>
+                </div>
+              </div>
+              <button onClick={() => setCurrentScreen('main-menu')}
+                style={{ background: 'transparent', border: '1.5px solid var(--bronze)', borderRadius: 8, padding: '10px 18px', marginTop: 16, fontFamily: 'Caveat, cursive', fontSize: 16, cursor: 'pointer', color: 'var(--ink-warm)', display: 'block', marginLeft: 'auto', marginRight: 'auto', minHeight: 48 }}
+              >← Voltar</button>
+            </div>
+          );
+          break;
+        }
+        case 'delete-profile-confirm':
+          screen = activeProfile ? (
+            <div style={{ maxWidth: 480, margin: '40px auto', padding: 20, background: 'var(--paper-cream)', border: '2px solid #b00020', borderRadius: 12, boxShadow: '2px 3px 0 rgba(0,0,0,0.10)' }}>
+              <div style={{ fontFamily: 'Caveat, cursive', fontSize: 24, color: 'var(--ink-primary)' }}>
+                Eliminar perfil "{activeProfile.name}"?
+              </div>
+              <p style={{ fontSize: 14, color: 'var(--ink-primary)', marginTop: 10, lineHeight: 1.4 }}>
+                Esta acção não se pode desfazer. Os melhores tempos com este nome ficam no Mural dos Campeões.
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 14, justifyContent: 'flex-end' }}>
+                <button onClick={() => setCurrentScreen('main-menu')}
+                  style={{ background: 'transparent', border: '1.5px solid var(--magic-gold)', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', color: 'var(--ink-primary)', minHeight: 56 }}
+                >Cancelar</button>
+                <button onClick={() => {
+                  const r = ContasLogic.deleteProfile(appState, activeProfile.name);
+                  if (r.ok) {
+                    persistState(r.state);
+                    const stillHaveProfiles = Object.keys(r.state.profiles).length > 0;
+                    setCurrentScreen(stillHaveProfiles ? 'main-menu' : 'first-profile');
+                  } else {
+                    setCurrentScreen('main-menu');
+                  }
+                }}
+                  style={{ background: '#b00020', color: 'var(--paper-cream)', border: 'none', borderRadius: 10, padding: '12px 18px', fontFamily: 'Caveat, cursive', fontSize: 18, cursor: 'pointer', minHeight: 56 }}
+                >Eliminar</button>
+              </div>
+            </div>
+          ) : (
+            (() => { setCurrentScreen('main-menu'); return null; })()
+          );
+          break;
+        case 'learn':
+          screen = (
+            <LearnGame
+              profile={activeProfile}
+              onUpdateProfile={updateProfile}
+              onBackToMenu={() => setCurrentScreen('main-menu')}
+              onSwitchProfile={() => setCurrentScreen('switch-profile')}
+              onDeleteProfile={() => setCurrentScreen('delete-profile-confirm')}
+            />
+          );
+          break;
+        case 'parental-from-menu':
+          screen = activeProfile ? (
+            <div>
+              <MainMenu
+                profile={activeProfile}
+                bestTime={(() => {
+                  const lb = ContasLogic.getLeaderboard(appState, 'somas', 'tempo');
+                  const mine = lb.find(e => e.profileName === activeProfile.name);
+                  return mine ? mine.points : null;
+                })()}
+                onLearn={() => setCurrentScreen('learn')}
+                onTimeAttack={() => setCurrentScreen('time-attack-lobby')}
+                onSeeMural={() => setCurrentScreen('leaderboard')}
+                onSwitchProfile={() => setCurrentScreen('switch-profile')}
+                onOpenParental={() => {}}
+              />
+              <ParentalPanel
+                open={true}
+                level={activeProfile.somas.level}
+                maxLevel={activeProfile.somas.maxLevelReached}
+                onSetLevel={(newLevel) => {
+                  const safe = Math.max(1, Math.min(activeProfile.somas.maxLevelReached || 1, newLevel));
+                  updateProfile({ ...activeProfile, somas: { ...activeProfile.somas, level: safe, streak: 0 } });
+                }}
+                onClose={() => setCurrentScreen('main-menu')}
+                onSwitchProfile={() => setCurrentScreen('switch-profile')}
+                onDeleteProfile={() => setCurrentScreen('delete-profile-confirm')}
+              />
+            </div>
+          ) : (
+            (() => { setCurrentScreen('main-menu'); return null; })()
+          );
+          break;
+        case 'time-attack-lobby': {
+          const profilesList = ContasLogic.listProfiles(appState);
+          const lb = ContasLogic.getLeaderboard(appState, 'somas', 'tempo');
+          screen = (
+            <TimeAttackLobby
+              profiles={profilesList}
+              leaderboard={lb}
+              onSelectProfile={(name) => {
+                handleSwitchProfile(name);
+                setCurrentScreen('time-attack-game');
+              }}
+              onCreateNew={() => setCurrentScreen('create-profile-from-ta')}
+              onSeeMural={() => setCurrentScreen('leaderboard')}
+              onBack={() => setCurrentScreen('main-menu')}
+            />
+          );
+          break;
+        }
+        case 'create-profile-from-ta':
+          screen = (
+            <ProfileCreate
+              existingNames={existingNames}
+              onCreate={(name, avatar) => {
+                const r = ContasLogic.createProfile(appState, name, avatar);
+                if (!r.ok) return;
+                const switched = { ...r.state, lastProfile: r.profile.name };
+                persistState(switched);
+                setCurrentScreen('time-attack-game');
+              }}
+              onCancel={() => setCurrentScreen('time-attack-lobby')}
+              profileLimitReached={profileLimitReached}
+            />
+          );
+          break;
+        case 'time-attack-game':
+          screen = activeProfile ? (
+            <TimeAttackGame
+              profile={activeProfile}
+              onFinish={(stats) => {
+                if (stats.points > 0) {
+                  const r = ContasLogic.addLeaderboardEntry(appState, 'somas', 'tempo', {
+                    profileName: activeProfile.name,
+                    avatar: activeProfile.avatar,
+                    points: stats.points,
+                    exercises: stats.exercises,
+                    hitRateFirstTry: stats.exercises > 0 ? stats.firstTryHits / stats.exercises : 0,
+                    maxLevelReached: stats.maxLevel,
+                    date: ContasLogic.todayISO ? ContasLogic.todayISO() : new Date().toISOString().slice(0, 10),
+                  });
+                  if (r.ok) persistState(r.state);
+                }
+                setLastSessionStats({ ...stats, profile: activeProfile });
+                setCurrentScreen('end-screen');
+              }}
+              onAbort={() => setCurrentScreen('main-menu')}
+            />
+          ) : (
+            (() => { setCurrentScreen('main-menu'); return null; })()
+          );
+          break;
+        case 'end-screen': {
+          const stats = lastSessionStats;
+          if (!stats) {
+            setCurrentScreen('main-menu');
+            screen = null;
+            break;
+          }
+          const lb = ContasLogic.getLeaderboard(appState, 'somas', 'tempo');
+          screen = (
+            <EndScreen
+              profile={stats.profile}
+              stats={stats}
+              leaderboard={lb}
+              onPlayAgain={() => { setLastSessionStats(null); setCurrentScreen('time-attack-game'); }}
+              onBackToMenu={() => { setLastSessionStats(null); setCurrentScreen('main-menu'); }}
+              onSeeMural={() => setCurrentScreen('leaderboard')}
+            />
+          );
+          break;
+        }
+        case 'leaderboard': {
+          const lb = ContasLogic.getLeaderboard(appState, 'somas', 'tempo');
+          screen = (
+            <LeaderboardPage
+              leaderboard={lb}
+              currentProfileName={activeProfile ? activeProfile.name : null}
+              onBack={() => setCurrentScreen('main-menu')}
+              onPlay={() => setCurrentScreen('time-attack-lobby')}
+            />
+          );
+          break;
+        }
+        case 'main-menu':
+        default: {
+          const lb = getLeaderboard(appState, 'somas', 'tempo');
+          const mine = activeProfile ? lb.find(e => e.profileName === activeProfile.name) : null;
+          screen = (
+            <MainMenu
+              profile={activeProfile}
+              bestTime={mine ? mine.points : null}
+              onLearn={() => setCurrentScreen('learn')}
+              onTimeAttack={() => setCurrentScreen('time-attack-lobby')}
+              onSeeMural={() => setCurrentScreen('leaderboard')}
+              onSwitchProfile={() => setCurrentScreen('switch-profile')}
+              onOpenParental={() => setCurrentScreen('parental-from-menu')}
+            />
+          );
+          break;
+        }
+      }
+
+      return (
+        <div>
+          {screen}
+          <UpdateBanner currentScreen={currentScreen} />
         </div>
       );
     }
@@ -1187,11 +2373,38 @@
        como secure — usar tools/serve_https.py no PC para servir via
        HTTPS para o tablet (ver README, secção "Instalar no tablet"). -->
   <script>
+    let waitingSW = null;
+    let updateBannerCallback = null;
+
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(reg => console.log('[SW] registado, scope:', reg.scope))
-          .catch(err => console.warn('[SW] falhou:', err));
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('./service-worker.js');
+          console.log('[SW] registado, scope:', reg.scope);
+
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            if (!newSW) return;
+            newSW.addEventListener('statechange', () => {
+              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                waitingSW = newSW;
+                if (updateBannerCallback) updateBannerCallback(true);
+              }
+            });
+          });
+
+          // Fallback de 1h caso uma versão antiga em cache de logic.js
+          // não exporte UPDATE_CHECK_INTERVAL_MS — evita setInterval com `undefined`,
+          // que o browser coerce para ~0 e faz hammer de reg.update().
+          const updateInterval = (typeof ContasLogic !== 'undefined' && typeof ContasLogic.UPDATE_CHECK_INTERVAL_MS === 'number')
+            ? ContasLogic.UPDATE_CHECK_INTERVAL_MS
+            : 60 * 60 * 1000;
+          setInterval(() => reg.update().catch(() => {}), updateInterval);
+
+          window.__matAppRegistration = reg;
+        } catch (err) {
+          console.warn('[SW] register falhou:', err);
+        }
       });
     }
   </script>

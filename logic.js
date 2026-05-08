@@ -4,6 +4,9 @@
 (function (global) {
   'use strict';
 
+  const APP_VERSION = '1.1.0';
+  const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1h
+
   const LEVELS = [
     { n: 1,  digits: 2, parcelas: 2, mode: 'col' },
     { n: 2,  digits: 2, parcelas: 2, mode: 'fim' },
@@ -20,7 +23,14 @@
   ];
 
   const STORAGE_KEY = 'contas_em_pe';
-  const SCHEMA_VERSION = 2;
+  const SCHEMA_VERSION = 3;
+  const MAX_PROFILES = 10;
+  const AVATAR_OPTIONS = ['🦊', '🐰', '🦄', '🐢', '🦔', '🦝', '🐉', '🦋'];
+  const DEFAULT_AVATAR = '🦊';
+  const POINTS_TO_LEVELUP = 50;
+  const HITS_TO_LEVEL_UP_TIMEATTACK = 5;
+  const TIME_ATTACK_DURATION_S = 600;
+  const LEADERBOARD_MAX_ENTRIES = 10;
 
   // Pontuação: nunca desconta, só soma. À 1ª = 10 pontos. Após erros = 5 pontos.
   const POINTS_FIRST_TRY = 10;
@@ -30,15 +40,30 @@
     return firstTry ? POINTS_FIRST_TRY : POINTS_RETRY;
   }
 
-  function defaultState() {
+  function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function emptyOperationProgress() {
     return {
       level: 1,
-      streak: 0,
+      maxLevelReached: 1,
       points: 0,
+      streak: 0,
+      pointsSinceLastLevelUp: 0,
       totalAttempts: 0,
       totalCorrectFirstTry: 0,
-      lastPlayed: new Date().toISOString().slice(0, 10),
+      lastPlayed: todayISO(),
+    };
+  }
+
+  function defaultState() {
+    return {
       version: SCHEMA_VERSION,
+      lastProfile: null,
+      appConfig: { mascotName: null },
+      profiles: {},
+      leaderboards: {},
     };
   }
 
@@ -58,8 +83,36 @@
       points: totalCorrect * POINTS_FIRST_TRY,
       totalAttempts: typeof parsed.totalAttempts === 'number' ? parsed.totalAttempts : 0,
       totalCorrectFirstTry: totalCorrect,
-      lastPlayed: typeof parsed.lastPlayed === 'string' ? parsed.lastPlayed : defaultState().lastPlayed,
+      lastPlayed: typeof parsed.lastPlayed === 'string' ? parsed.lastPlayed : todayISO(),
+      version: 2,
+    };
+  }
+
+  function migrateV2toV3(v2) {
+    const level = clampLevel(v2.level);
+    const lastPlayed = typeof v2.lastPlayed === 'string' ? v2.lastPlayed : todayISO();
+    return {
       version: SCHEMA_VERSION,
+      lastProfile: 'jogador',
+      appConfig: { mascotName: null },
+      profiles: {
+        'jogador': {
+          name: 'jogador',
+          avatar: DEFAULT_AVATAR,
+          createdAt: lastPlayed,
+          somas: {
+            level,
+            maxLevelReached: level,
+            points: typeof v2.points === 'number' && v2.points >= 0 ? v2.points : 0,
+            streak: typeof v2.streak === 'number' ? v2.streak : 0,
+            pointsSinceLastLevelUp: 0,
+            totalAttempts: typeof v2.totalAttempts === 'number' ? v2.totalAttempts : 0,
+            totalCorrectFirstTry: typeof v2.totalCorrectFirstTry === 'number' ? v2.totalCorrectFirstTry : 0,
+            lastPlayed,
+          },
+        },
+      },
+      leaderboards: {},
     };
   }
 
@@ -68,32 +121,37 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
       const parsed = JSON.parse(raw);
-      if (parsed.version === 1) return migrateV1toV2(parsed);
-      if (parsed.version !== SCHEMA_VERSION) return defaultState();
-      return {
-        level: clampLevel(parsed.level),
-        streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
-        points: typeof parsed.points === 'number' && parsed.points >= 0 ? parsed.points : 0,
-        totalAttempts: typeof parsed.totalAttempts === 'number' ? parsed.totalAttempts : 0,
-        totalCorrectFirstTry: typeof parsed.totalCorrectFirstTry === 'number' ? parsed.totalCorrectFirstTry : 0,
-        lastPlayed: typeof parsed.lastPlayed === 'string' ? parsed.lastPlayed : defaultState().lastPlayed,
-        version: SCHEMA_VERSION,
-      };
+
+      // v1 → v2 → v3
+      if (parsed.version === 1) {
+        const v2 = migrateV1toV2(parsed);
+        const v3 = migrateV2toV3(v2);
+        try { localStorage.setItem(STORAGE_KEY + '_backup_v2', JSON.stringify(v2)); } catch (e) {}
+        return v3;
+      }
+
+      // v2 → v3
+      if (parsed.version === 2) {
+        const v3 = migrateV2toV3(parsed);
+        try { localStorage.setItem(STORAGE_KEY + '_backup_v2', JSON.stringify(parsed)); } catch (e) {}
+        return v3;
+      }
+
+      // v3 (current)
+      if (parsed.version === SCHEMA_VERSION) {
+        return parsed;
+      }
+
+      // Versão desconhecida (futuro?) → fallback
+      return defaultState();
     } catch (e) {
       return defaultState();
     }
   }
 
-  function saveState(partial) {
-    const current = loadState();
-    const next = {
-      ...current,
-      ...partial,
-      lastPlayed: new Date().toISOString().slice(0, 10),
-      version: SCHEMA_VERSION,
-    };
+  function saveState(state) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
       console.warn('localStorage save failed', e);
     }
@@ -265,20 +323,178 @@
     throw new Error(`generateExercise: incapaz de gerar exercício válido para nível ${level.n}`);
   }
 
+  function validateProfileName(name, existingNames) {
+    if (typeof name !== 'string') return { ok: false, reason: 'empty' };
+    const trimmed = name.trim();
+    if (trimmed.length === 0) return { ok: false, reason: 'empty' };
+    if (trimmed.length > 12) return { ok: false, reason: 'too-long' };
+    // Letras (incluindo acentos) e espaço apenas
+    if (!/^[A-Za-zÀ-ÿ ]+$/.test(trimmed)) return { ok: false, reason: 'invalid-chars' };
+    const lower = trimmed.toLowerCase();
+    const existing = (existingNames || []).map(n => String(n).toLowerCase());
+    if (existing.includes(lower)) return { ok: false, reason: 'duplicate' };
+    return { ok: true };
+  }
+
+  function listProfiles(state) {
+    return Object.keys(state.profiles || {}).map(name => state.profiles[name]);
+  }
+
+  function getProfile(state, name) {
+    return state.profiles ? state.profiles[name] : undefined;
+  }
+
+  function createProfile(state, name, avatar) {
+    const trimmed = (typeof name === 'string') ? name.trim() : '';
+    const existing = Object.keys(state.profiles || {});
+    const validation = validateProfileName(trimmed, existing);
+    if (!validation.ok) return { ok: false, reason: validation.reason };
+    if (existing.length >= MAX_PROFILES) return { ok: false, reason: 'limit-reached' };
+    const ava = AVATAR_OPTIONS.includes(avatar) ? avatar : DEFAULT_AVATAR;
+    const newProfile = {
+      name: trimmed,
+      avatar: ava,
+      createdAt: todayISO(),
+      somas: emptyOperationProgress(),
+    };
+    const next = {
+      ...state,
+      profiles: { ...state.profiles, [trimmed]: newProfile },
+      lastProfile: state.lastProfile || trimmed,
+    };
+    return { ok: true, state: next, profile: newProfile };
+  }
+
+  function deleteProfile(state, name) {
+    if (!state.profiles || !state.profiles[name]) {
+      return { ok: false, reason: 'not-found' };
+    }
+    const nextProfiles = { ...state.profiles };
+    delete nextProfiles[name];
+    const remaining = Object.keys(nextProfiles);
+    const nextLast = state.lastProfile === name
+      ? (remaining[0] || null)
+      : state.lastProfile;
+    return {
+      ok: true,
+      state: { ...state, profiles: nextProfiles, lastProfile: nextLast },
+    };
+  }
+
+  function setActiveProfile(state, name) {
+    if (!state.profiles || !state.profiles[name]) {
+      return { ok: false, reason: 'not-found' };
+    }
+    return { ok: true, state: { ...state, lastProfile: name } };
+  }
+
+  function getActiveProfile(state) {
+    if (!state.lastProfile) return null;
+    return state.profiles ? state.profiles[state.lastProfile] || null : null;
+  }
+
+  function leaderboardKey(operation, mode) {
+    return `${operation}:${mode}`;
+  }
+
+  function getLeaderboard(state, operation, mode) {
+    if (!state.leaderboards) return [];
+    const arr = state.leaderboards[leaderboardKey(operation, mode)];
+    return Array.isArray(arr) ? arr.slice() : [];
+  }
+
+  function topN(state, operation, mode, n) {
+    const list = getLeaderboard(state, operation, mode);
+    return list.slice(0, Math.max(0, n));
+  }
+
+  function addLeaderboardEntry(state, operation, mode, entry) {
+    if (typeof entry.points !== 'number' || entry.points <= 0) {
+      return { ok: false, reason: 'no-points', state };
+    }
+    const key = leaderboardKey(operation, mode);
+    const current = (state.leaderboards && Array.isArray(state.leaderboards[key]))
+      ? state.leaderboards[key].slice()
+      : [];
+    current.push({
+      profileName: String(entry.profileName || ''),
+      avatar: String(entry.avatar || DEFAULT_AVATAR),
+      points: entry.points,
+      exercises: typeof entry.exercises === 'number' ? entry.exercises : 0,
+      hitRateFirstTry: typeof entry.hitRateFirstTry === 'number' ? entry.hitRateFirstTry : 0,
+      maxLevelReached: typeof entry.maxLevelReached === 'number' ? entry.maxLevelReached : 1,
+      date: entry.date || todayISO(),
+    });
+    // Ordenar: pontos desc, exercícios desc, ordem de inserção (estável via Array.sort em V8 moderno)
+    current.sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      return (b.exercises || 0) - (a.exercises || 0);
+    });
+    const trimmed = current.slice(0, LEADERBOARD_MAX_ENTRIES);
+    return {
+      ok: true,
+      state: {
+        ...state,
+        leaderboards: { ...state.leaderboards, [key]: trimmed },
+      },
+    };
+  }
+
+  function pointsForLevel(level, firstTry) {
+    const lvl = Math.max(1, Math.min(12, Math.floor(level)));
+    const base = 5 + 5 * lvl;       // nível 1 = 10, nível 12 = 65
+    if (firstTry) return base;
+    return Math.ceil(base / 2);
+  }
+
+  function nextLevelInRamp(currentLevel, hitsAtCurrent) {
+    const lvl = Math.max(1, Math.min(12, Math.floor(currentLevel)));
+    const hits = Math.max(0, Math.floor(hitsAtCurrent));
+    if (hits + 1 >= HITS_TO_LEVEL_UP_TIMEATTACK && lvl < 12) {
+      return { level: lvl + 1, hitsAtLevel: 0, leveledUp: true };
+    }
+    return { level: lvl, hitsAtLevel: hits + 1, leveledUp: false };
+  }
+
   global.ContasLogic = {
+    APP_VERSION,
+    UPDATE_CHECK_INTERVAL_MS,
     LEVELS,
     SCHEMA_VERSION,
+    MAX_PROFILES,
+    AVATAR_OPTIONS,
+    DEFAULT_AVATAR,
+    POINTS_TO_LEVELUP,
+    HITS_TO_LEVEL_UP_TIMEATTACK,
+    TIME_ATTACK_DURATION_S,
+    LEADERBOARD_MAX_ENTRIES,
     POINTS_FIRST_TRY,
     POINTS_RETRY,
     numColumns,
     computeColumnSums,
     hasAtLeastOneCarry,
     validateSlot,
+    validateProfileName,
     generateExercise,
     clearExerciseCache,
     computePointsForExercise,
     loadState,
     saveState,
     resetState,
+    defaultState,
+    migrateV2toV3,
+    emptyOperationProgress,
+    todayISO,
+    listProfiles,
+    getProfile,
+    createProfile,
+    deleteProfile,
+    setActiveProfile,
+    getActiveProfile,
+    getLeaderboard,
+    topN,
+    addLeaderboardEntry,
+    pointsForLevel,
+    nextLevelInRamp,
   };
 })(window);
