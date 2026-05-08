@@ -11,8 +11,8 @@ versionamento semântico ([SemVer](https://semver.org/)).
   de comportar mais jogos pedagógicos no futuro (palavras, lógica,
   ciência…). O jogo de matemática mantém o nome **Contas em Pé**.
 - URL pública nova: [https://apbrito.github.io/jogos-da-coruja/](https://apbrito.github.io/jogos-da-coruja/).
-  A URL antiga `apbrito.github.io/contas-em-pe/` é redirecionada
-  automaticamente pelo GitHub durante 1 ano.
+  A URL antiga `apbrito.github.io/contas-em-pe/` deixou de estar
+  activa — usem sempre o link novo.
 - Progresso dos jogadores é preservado: a chave de `localStorage`
   mantém-se `contas_em_pe`, logo quem já estava a jogar não perde
   pontos, níveis nem entradas no Mural.
